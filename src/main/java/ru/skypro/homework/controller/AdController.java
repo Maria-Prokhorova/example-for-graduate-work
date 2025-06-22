@@ -1,8 +1,8 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.ad.Ad;
 import ru.skypro.homework.dto.ad.Ads;
@@ -10,6 +10,7 @@ import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ad.ExtendedAd;
 import ru.skypro.homework.service.AdService;
 
+@Tag(name = "Объявления", description = "Раздел содержит методы по работе с объявлениями")
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -22,67 +23,45 @@ public class AdController {
         this.adService = adService;
     }
 
+    @Operation(summary = "Получение всех объявлений")
     @GetMapping
-    public ResponseEntity<?> getAllAds() {
-        return new ResponseEntity<>(adService.getAllAds(), HttpStatus.OK);
+    public Ads getAllAds() {
+        return adService.getAllAds();
     }
 
+    @Operation(summary = "Добавление объявления")
     @PostMapping()
-    public ResponseEntity<?> addAd(@RequestBody CreateOrUpdateAd newAd) {
-        Ad ad = adService.addAd(newAd);
-        if (ad != null) {
-            return new ResponseEntity<>(ad, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public Ad addAd(@RequestBody CreateOrUpdateAd newAd) {
+        return adService.addAd(newAd);
     }
 
+    @Operation(summary = "Получение информации об объявлении")
     @GetMapping("/{id}")
-    public ResponseEntity<?> getInfoAboutAd(@PathVariable Integer id) {
-        ExtendedAd infoAboutAd = adService.getInfoAboutAd(id    );
-        if (infoAboutAd != null) {
-            return new ResponseEntity<>(infoAboutAd, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ExtendedAd getInfoAboutAd(@PathVariable Integer id) {
+        return adService.getInfoAboutAd(id);
     }
 
+    @Operation(summary = "Удаление объявления")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAd(@PathVariable Integer id) {
-        if (adService.deleteAd(id)) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public void deleteAd(@PathVariable Integer id) {
+        adService.deleteAd(id);
     }
 
+    @Operation(summary = "Обновление информации об объявлении")
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateInfoAboutAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAd updateAd) {
-        Ad newInfoAboutAd = adService.updateInfoAboutAd(id, updateAd);
-        if (newInfoAboutAd != null) {
-            return new ResponseEntity<>(newInfoAboutAd, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public Ad updateInfoAboutAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAd updateAd) {
+        return adService.updateInfoAboutAd(id, updateAd);
     }
 
+    @Operation(summary = "Получение объявлений авторизованного пользователя")
     @GetMapping("/me")
-    public ResponseEntity<?> getAdsByUser() {
-        Ads allAds = adService.getAdsByUser();
-        if (allAds != null) {
-            return new ResponseEntity<>(allAds, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public Ads getAdsByUser() {
+        return adService.getAdsByUser();
     }
 
+    @Operation(summary = "Обновление картинки объявлений")
     @PatchMapping("/{id}/image")
-    public ResponseEntity<?> updateAvatarAd(@PathVariable Integer id, @RequestBody String image) {
-        String newImage = adService.updateAvatarAd(id, image);
-        if (newImage != null) {
-            return new ResponseEntity<>(newImage, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public String updateAvatarAd(@PathVariable Integer id, @RequestBody String image) {
+        return adService.updateAvatarAd(id, image);
     }
 }
