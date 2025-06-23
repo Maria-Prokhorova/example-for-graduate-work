@@ -1,13 +1,14 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.comment.Comment;
 import ru.skypro.homework.dto.comment.Comments;
 import ru.skypro.homework.service.CommentService;
 
+@Tag(name = "Комментарии", description = "Раздел содержит методы по работе с комментариями объявлений")
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -20,42 +21,27 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @Operation(summary = "Получение комментариев объявления")
     @GetMapping("/{id}/comments")
-    public ResponseEntity<?> getComments(@PathVariable Integer id) {
-        Comments comments = commentService.getComments(id);
-        if (comments != null) {
-            return new ResponseEntity<>(comments, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public Comments getComments(@PathVariable Integer id) {
+        return commentService.getComments(id);
     }
 
+    @Operation(summary = "Добавление комментария к объявлению")
     @PostMapping("/{id}/comments")
-    public ResponseEntity<?> addComment(@PathVariable Integer id, @RequestBody String textComment) {
-        Comment comment = commentService.addComment(id, textComment);
-        if (comment != null) {
-            return new ResponseEntity<>(comment, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public Comment addComment(@PathVariable Integer id, @RequestBody String textComment) {
+       return commentService.addComment(id, textComment);
     }
 
+    @Operation(summary = "Удаление комментария")
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable Integer adId, @PathVariable Integer commentId) {
-        if (commentService.deleteComment(adId, commentId)) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public void deleteComment(@PathVariable Integer adId, @PathVariable Integer commentId) {
+       commentService.deleteComment(adId, commentId);
     }
 
+    @Operation(summary = "Обновление комментария")
     @PatchMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody String textComment) {
-        Comment comment = commentService.upDateComment(adId, commentId, textComment);
-        if (comment != null) {
-            return new ResponseEntity<>(comment, HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public Comment updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody String textComment) {
+        return commentService.upDateComment(adId, commentId, textComment);
     }
 }
