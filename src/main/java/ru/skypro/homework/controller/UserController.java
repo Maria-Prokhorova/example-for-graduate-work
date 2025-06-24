@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.register.NewPassword;
-import ru.skypro.homework.dto.register.UpdateUser;
-import ru.skypro.homework.dto.user.User;
+import ru.skypro.homework.dto.register.NewPasswordDto;
+import ru.skypro.homework.dto.register.UpdateUserDto;
+import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.service.UserService;
 
 @Tag(name = "Пользователи", description = "Раздел содержит методы по работе личной информацией пользователя")
@@ -24,25 +24,25 @@ public class UserController {
 
     @Operation(summary = "Обновление пароля")
     @PostMapping("/set_password")
-    public boolean updatePassword(@RequestBody NewPassword newPassword) {
-         return userService.updatePassword(newPassword);
+    public boolean updatePassword(@RequestBody NewPasswordDto newPasswordDto) {
+        return userService.updatePassword(newPasswordDto);
     }
 
     @Operation(summary = "Получение информации об авторизованном пользователе")
     @GetMapping("/me")
-    public User getInfoAboutUser() {
+    public UserDto getInfoAboutUser() {
         return userService.getInfoAboutUser();
     }
 
     @Operation(summary = "Обновление информации об авторизованном пользователе")
     @PatchMapping("/me")
-    public UpdateUser updateInfoAboutUser(@RequestBody UpdateUser newInfoUser) {
+    public UpdateUserDto updateInfoAboutUser(@RequestBody UpdateUserDto newInfoUser) {
         return userService.updateInfoAboutUser(newInfoUser);
     }
 
     @Operation(summary = "Обновление аватара авторизованного пользователя")
     @PatchMapping("me/image")
     public boolean updateAvatarUser(@RequestBody String image) {
-         return userService.updateAvatarUser(image);
+        return userService.updateAvatarUser(image);
     }
 }

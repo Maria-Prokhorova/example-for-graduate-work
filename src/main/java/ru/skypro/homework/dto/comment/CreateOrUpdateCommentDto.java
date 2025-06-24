@@ -7,8 +7,8 @@ import lombok.Data;
  * DTO для создания и обновления комментария
  */
 @Data
-public class CreateOrUpdateComment {
+public class CreateOrUpdateCommentDto {
 
-    @Schema(description = "текст комментария", minLength= 8, maxLength= 64)
+    @Schema(description = "текст комментария", minLength = 8, maxLength = 64)
     private String text;
 }
