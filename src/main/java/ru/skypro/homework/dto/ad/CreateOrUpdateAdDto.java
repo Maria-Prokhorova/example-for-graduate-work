@@ -9,12 +9,12 @@ import lombok.Data;
 @Data
 public class CreateOrUpdateAdDto {
 
-    @Schema(description = "заголовок объявления", minLength= 4, maxLength= 32)
+    @Schema(description = "заголовок объявления", minLength = 4, maxLength = 32)
     private String title;
 
-    @Schema(description = "цена объявления", minimum= "0", maximum= "100000000")
+    @Schema(description = "цена объявления", minimum = "0", maximum = "100000000")
     private Integer price;
 
-    @Schema(description = "описание объявления", minLength= 8, maxLength= 64)
+    @Schema(description = "описание объявления", minLength = 8, maxLength = 64)
     private String description;
 }

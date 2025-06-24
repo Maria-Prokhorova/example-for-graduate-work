@@ -32,7 +32,7 @@ public class Ad {
     private String image;
 
     @Schema(description = "id автора объявления")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private User user;
 
@@ -40,5 +40,62 @@ public class Ad {
     private Set<Comment> commentsInAd = new HashSet<>();
 
     public Ad() {
+    }
+
+    public Ad(String title, Integer price, String description, String image, User user, Set<Comment> commentsInAd) {
+        this.title = title;
+        this.price = price;
+        this.description = description;
+        this.image = image;
+        this.user = user;
+        this.commentsInAd = commentsInAd;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Set<Comment> getCommentsInAd() {
+        return commentsInAd;
+    }
+
+    public void setCommentsInAd(Set<Comment> commentsInAd) {
+        this.commentsInAd = commentsInAd;
     }
 }
