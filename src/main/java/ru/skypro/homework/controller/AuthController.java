@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skypro.homework.dto.register.Login;
-import ru.skypro.homework.dto.register.Register;
+import ru.skypro.homework.dto.register.LoginDto;
+import ru.skypro.homework.dto.register.RegisterDto;
 import ru.skypro.homework.service.AuthService;
 
 @Tag(name = "Авторизация/регистрация пользователя", description = "Раздел содержит методы для регистрации или авторизации пользователя")
@@ -25,7 +25,7 @@ public class AuthController {
 
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Login login) {
+    public ResponseEntity<?> login(@RequestBody LoginDto login) {
         if (authService.login(login.getUsername(), login.getPassword())) {
             return ResponseEntity.ok().build();
         } else {
@@ -35,8 +35,8 @@ public class AuthController {
 
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Register register) {
-        if (authService.register(register)) {
+    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
+        if (authService.register(registerDto)) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

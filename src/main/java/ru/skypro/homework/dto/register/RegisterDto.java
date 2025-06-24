@@ -6,7 +6,7 @@ import ru.skypro.homework.dto.Role;
 
 // DTO для регистрации нового пользователя
 @Data
-public class Register {
+public class RegisterDto {
 
     @Schema(description = "логин", minLength= 4, maxLength= 32)
     private String username;
@@ -20,7 +20,7 @@ public class Register {
     @Schema(description = "фамилия пользователя", minLength= 2, maxLength= 16)
     private String lastName;
 
-    @Schema(description = "телефон пользователя", pattern= "\+7\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}")
+    @Schema(description = "телефон пользователя"/*, pattern= "\+7\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}"*/)
     private String phone;
 
     @Schema(description = "роль пользователя")
