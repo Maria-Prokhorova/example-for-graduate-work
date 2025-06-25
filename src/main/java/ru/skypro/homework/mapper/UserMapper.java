@@ -21,6 +21,7 @@ public class UserMapper {
         user.setFirstName(userEntity.getFirstName());
         user.setLastName(userEntity.getLastName());
         user.setPhone(userEntity.getPhoneNumber());
+        user.setRole(userEntity.getRole());
         user.setImage(userEntity.getImagePath());
         return user;
     }
