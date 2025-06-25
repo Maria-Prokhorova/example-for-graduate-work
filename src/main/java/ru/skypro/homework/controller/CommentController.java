@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.comment.CommentDto;
-import ru.skypro.homework.dto.comment.CommentsDto;
+import ru.skypro.homework.dto.comment.Comment;
+import ru.skypro.homework.dto.comment.Comments;
 import ru.skypro.homework.service.CommentService;
 
 @Tag(name = "Комментарии", description = "Раздел содержит методы по работе с комментариями объявлений")
@@ -23,13 +23,13 @@ public class CommentController {
 
     @Operation(summary = "Получение комментариев объявления")
     @GetMapping("/{id}/comments")
-    public CommentsDto getComments(@PathVariable Integer id) {
+    public Comments getComments(@PathVariable Integer id) {
         return commentService.getComments(id);
     }
 
     @Operation(summary = "Добавление комментария к объявлению")
     @PostMapping("/{id}/comments")
-    public CommentDto addComment(@PathVariable Integer id, @RequestBody String textComment) {
+    public Comment addComment(@PathVariable Integer id, @RequestBody String textComment) {
         return commentService.addComment(id, textComment);
     }
 
@@ -41,7 +41,7 @@ public class CommentController {
 
     @Operation(summary = "Обновление комментария")
     @PatchMapping("/{adId}/comments/{commentId}")
-    public CommentDto updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody String textComment) {
+    public Comment updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody String textComment) {
         return commentService.upDateComment(adId, commentId, textComment);
     }
 }

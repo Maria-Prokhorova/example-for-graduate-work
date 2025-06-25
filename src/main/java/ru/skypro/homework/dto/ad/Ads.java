@@ -9,9 +9,9 @@ import java.util.List;
  * DTO для списка объявлений
  */
 @Data
-public class AdsDto {
+public class Ads {
 
     @Schema(description = "общее количество объявлений")
     private Integer count;
-    private List<AdDto> results;
+    private List<Ad> results;
 }

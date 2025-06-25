@@ -1,16 +1,16 @@
 package ru.skypro.homework.service;
 
-import ru.skypro.homework.dto.comment.CommentDto;
-import ru.skypro.homework.dto.comment.CommentsDto;
+import ru.skypro.homework.dto.comment.Comment;
+import ru.skypro.homework.dto.comment.Comments;
 
 public interface CommentService {
 
-    CommentsDto getComments(Integer idAd);
+    Comments getComments(Integer idAd);
 
-    CommentDto addComment(Integer idAd, String textComment);
+    Comment addComment(Integer idAd, String textComment);
 
     boolean deleteComment(Integer adId, Integer commentId);
 
-    CommentDto upDateComment(Integer adId, Integer commentId, String textComment);
+    Comment upDateComment(Integer adId, Integer commentId, String textComment);
 
 }

@@ -7,7 +7,7 @@ import lombok.Data;
  * DTO для представления комментария
  */
 @Data
-public class CommentDto {
+public class Comment {
 
     @Schema(description = "id автора комментария")
     private Integer author;

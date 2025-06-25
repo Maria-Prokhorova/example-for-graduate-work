@@ -5,7 +5,7 @@ import lombok.Data;
 
 // DTO для входа в систему
 @Data
-public class LoginDto {
+public class Login {
 
     @Schema(description = "логин", minLength = 4, maxLength = 32)
     private String username;

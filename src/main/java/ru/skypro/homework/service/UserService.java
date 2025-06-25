@@ -1,16 +1,16 @@
 package ru.skypro.homework.service;
 
-import ru.skypro.homework.dto.register.NewPasswordDto;
-import ru.skypro.homework.dto.register.UpdateUserDto;
-import ru.skypro.homework.dto.user.UserDto;
+import ru.skypro.homework.dto.register.NewPassword;
+import ru.skypro.homework.dto.register.UpdateUser;
+import ru.skypro.homework.dto.user.User;
 
 public interface UserService {
 
-    boolean updatePassword(NewPasswordDto newPasswordDto);
+    boolean updatePassword(NewPassword newPassword);
 
-    UserDto getInfoAboutUser();
+    User getInfoAboutUser();
 
-    UpdateUserDto updateInfoAboutUser(UpdateUserDto newInfoUser);
+    UpdateUser updateInfoAboutUser(UpdateUser newInfoUser);
 
     boolean updateAvatarUser(String image);
 }

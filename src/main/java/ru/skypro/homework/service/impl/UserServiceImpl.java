@@ -1,26 +1,26 @@
 package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.register.NewPasswordDto;
-import ru.skypro.homework.dto.register.UpdateUserDto;
-import ru.skypro.homework.dto.user.UserDto;
+import ru.skypro.homework.dto.register.NewPassword;
+import ru.skypro.homework.dto.register.UpdateUser;
+import ru.skypro.homework.dto.user.User;
 import ru.skypro.homework.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Override
-    public boolean updatePassword(NewPasswordDto newPasswordDto) {
+    public boolean updatePassword(NewPassword newPassword) {
         return true;
     }
 
     @Override
-    public UserDto getInfoAboutUser() {
+    public User getInfoAboutUser() {
         return null;
     }
 
     @Override
-    public UpdateUserDto updateInfoAboutUser(UpdateUserDto newInfoUser) {
+    public UpdateUser updateInfoAboutUser(UpdateUser newInfoUser) {
         return null;
     }
 

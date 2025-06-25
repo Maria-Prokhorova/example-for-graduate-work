@@ -9,9 +9,9 @@ import java.util.List;
  * DTO для списка комментариев
  */
 @Data
-public class CommentsDto {
+public class Comments {
 
     @Schema(description = "общее количество комментариев")
     private Integer count;
-    private List<CommentDto> results;
+    private List<Comment> results;
 }

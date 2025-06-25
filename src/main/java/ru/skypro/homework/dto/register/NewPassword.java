@@ -7,7 +7,7 @@ import lombok.Data;
  * DTO для смены пароля пользователя
  */
 @Data
-public class NewPasswordDto {
+public class NewPassword {
 
     @Schema(description = "текущий пароль", minLength = 8, maxLength = 16)
     private String currentPassword;

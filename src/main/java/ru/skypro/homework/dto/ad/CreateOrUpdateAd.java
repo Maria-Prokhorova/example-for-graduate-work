@@ -7,7 +7,7 @@ import lombok.Data;
  * DTO для создания и обновления объявления
  */
 @Data
-public class CreateOrUpdateAdDto {
+public class CreateOrUpdateAd {
 
     @Schema(description = "заголовок объявления", minLength = 4, maxLength = 32)
     private String title;

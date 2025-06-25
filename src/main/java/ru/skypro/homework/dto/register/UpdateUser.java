@@ -7,7 +7,7 @@ import lombok.Data;
  * DTO для обновления данных пользователя
  */
 @Data
-public class UpdateUserDto {
+public class UpdateUser {
 
     @Schema(description = "имя пользователя", minLength = 3, maxLength = 10)
     private String firstName;

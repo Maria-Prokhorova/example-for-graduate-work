@@ -7,7 +7,7 @@ import lombok.Data;
  * DTO для расширенного представления объявления
  */
 @Data
-public class ExtendedAdDto {
+public class ExtendedAd {
 
     @Schema(description = "id объявления")
     private Integer pk;

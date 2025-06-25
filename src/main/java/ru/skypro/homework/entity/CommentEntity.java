@@ -1,4 +1,4 @@
-package ru.skypro.homework.model;
+package ru.skypro.homework.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class CommentEntity {
 
     @Schema(description = "id комментария")
     @Id
@@ -24,21 +24,21 @@ public class Comment {
     @Schema(description = "объявление")
     @ManyToOne
     @JoinColumn(name = "ads_pk")
-    private Ad ad;
+    private AdEntity adEntity;
 
     @Schema(description = "id автора комментария")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
-    private User user;
+    private UserEntity userEntity;
 
-    public Comment() {
+    public CommentEntity() {
     }
 
-    public Comment(String text, Long createdAt, Ad ad, User user) {
+    public CommentEntity(String text, Long createdAt, AdEntity adEntity, UserEntity userEntity) {
         this.text = text;
         this.createdAt = createdAt;
-        this.ad = ad;
-        this.user = user;
+        this.adEntity = adEntity;
+        this.userEntity = userEntity;
     }
 
     public String getText() {
@@ -57,19 +57,19 @@ public class Comment {
         this.createdAt = createdAt;
     }
 
-    public Ad getAd() {
-        return ad;
+    public AdEntity getAd() {
+        return adEntity;
     }
 
-    public void setAd(Ad ad) {
-        this.ad = ad;
+    public void setAd(AdEntity adEntity) {
+        this.adEntity = adEntity;
     }
 
-    public User getUser() {
-        return user;
+    public UserEntity getUser() {
+        return userEntity;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 }

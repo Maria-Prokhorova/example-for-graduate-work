@@ -2,13 +2,13 @@ package ru.skypro.homework.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.entity.Role;
 
 /**
  * DTO для представления данных пользователя
  */
 @Data
-public class UserDto {
+public class User {
 
     @Schema(description = "id пользователя")
     private Integer id;

@@ -1,4 +1,4 @@
-package ru.skypro.homework.model;
+package ru.skypro.homework.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "ads")
-public class Ad {
+public class AdEntity {
 
     @Schema(description = "id объявления")
     @Id
@@ -34,20 +34,20 @@ public class Ad {
     @Schema(description = "id автора объявления")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
-    private User user;
+    private UserEntity userEntity;
 
     @OneToMany(mappedBy = "ad")
-    private Set<Comment> commentsInAd = new HashSet<>();
+    private Set<CommentEntity> commentsInAd = new HashSet<>();
 
-    public Ad() {
+    public AdEntity() {
     }
 
-    public Ad(String title, Integer price, String description, String image, User user, Set<Comment> commentsInAd) {
+    public AdEntity(String title, Integer price, String description, String image, UserEntity userEntity, Set<CommentEntity> commentsInAd) {
         this.title = title;
         this.price = price;
         this.description = description;
         this.image = image;
-        this.user = user;
+        this.userEntity = userEntity;
         this.commentsInAd = commentsInAd;
     }
 
@@ -83,19 +83,19 @@ public class Ad {
         this.image = image;
     }
 
-    public User getUser() {
-        return user;
+    public UserEntity getUser() {
+        return userEntity;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 
-    public Set<Comment> getCommentsInAd() {
+    public Set<CommentEntity> getCommentsInAd() {
         return commentsInAd;
     }
 
-    public void setCommentsInAd(Set<Comment> commentsInAd) {
+    public void setCommentsInAd(Set<CommentEntity> commentsInAd) {
         this.commentsInAd = commentsInAd;
     }
 }

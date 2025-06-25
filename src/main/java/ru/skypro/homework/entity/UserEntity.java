@@ -1,15 +1,13 @@
-package ru.skypro.homework.model;
+package ru.skypro.homework.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import ru.skypro.homework.dto.Role;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
     @Schema(description = "id пользователя")
     @Id
@@ -46,15 +44,15 @@ public class User {
     private String image;
 
     @OneToMany(mappedBy = "user")
-    private Set<Comment> commentsByUser = new HashSet<>();
+    private Set<CommentEntity> commentsByUser = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private Set<Ad> adsByUser = new HashSet<>();
+    private Set<AdEntity> adsByUser = new HashSet<>();
 
-    public User() {
+    public UserEntity() {
     }
 
-    public User(String firstName, String lastName, String email, String password, String phone, Role role, String image, Set<Comment> commentsByUser, Set<Ad> adsByUser) {
+    public UserEntity(String firstName, String lastName, String email, String password, String phone, Role role, String image, Set<CommentEntity> commentsByUser, Set<AdEntity> adsByUser) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -122,19 +120,19 @@ public class User {
         this.image = image;
     }
 
-    public Set<Comment> getCommentsByUser() {
+    public Set<CommentEntity> getCommentsByUser() {
         return commentsByUser;
     }
 
-    public void setCommentsByUser(Set<Comment> commentsByUser) {
+    public void setCommentsByUser(Set<CommentEntity> commentsByUser) {
         this.commentsByUser = commentsByUser;
     }
 
-    public Set<Ad> getAdsByUser() {
+    public Set<AdEntity> getAdsByUser() {
         return adsByUser;
     }
 
-    public void setAdsByUser(Set<Ad> adsByUser) {
+    public void setAdsByUser(Set<AdEntity> adsByUser) {
         this.adsByUser = adsByUser;
     }
 }

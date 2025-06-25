@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.ad.AdDto;
-import ru.skypro.homework.dto.ad.AdsDto;
-import ru.skypro.homework.dto.ad.CreateOrUpdateAdDto;
-import ru.skypro.homework.dto.ad.ExtendedAdDto;
+import ru.skypro.homework.dto.ad.Ad;
+import ru.skypro.homework.dto.ad.Ads;
+import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
+import ru.skypro.homework.dto.ad.ExtendedAd;
 import ru.skypro.homework.service.AdService;
 
 @Tag(name = "Объявления", description = "Раздел содержит методы по работе с объявлениями")
@@ -25,19 +25,19 @@ public class AdController {
 
     @Operation(summary = "Получение всех объявлений")
     @GetMapping
-    public AdsDto getAllAds() {
+    public Ads getAllAds() {
         return adService.getAllAds();
     }
 
     @Operation(summary = "Добавление объявления")
     @PostMapping()
-    public AdDto addAd(@RequestBody CreateOrUpdateAdDto newAd) {
+    public Ad addAd(@RequestBody CreateOrUpdateAd newAd) {
         return adService.addAd(newAd);
     }
 
     @Operation(summary = "Получение информации об объявлении")
     @GetMapping("/{id}")
-    public ExtendedAdDto getInfoAboutAd(@PathVariable Integer id) {
+    public ExtendedAd getInfoAboutAd(@PathVariable Integer id) {
         return adService.getInfoAboutAd(id);
     }
 
@@ -49,13 +49,13 @@ public class AdController {
 
     @Operation(summary = "Обновление информации об объявлении")
     @PatchMapping("/{id}")
-    public AdDto updateInfoAboutAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAdDto updateAd) {
+    public Ad updateInfoAboutAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAd updateAd) {
         return adService.updateInfoAboutAd(id, updateAd);
     }
 
     @Operation(summary = "Получение объявлений авторизованного пользователя")
     @GetMapping("/me")
-    public AdsDto getAdsByUser() {
+    public Ads getAdsByUser() {
         return adService.getAdsByUser();
     }
 
