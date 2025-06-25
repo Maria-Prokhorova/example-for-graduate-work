@@ -2,7 +2,7 @@ package ru.skypro.homework.dto.register;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.entity.Role;
 
 // DTO для регистрации нового пользователя
 @Data
