@@ -12,8 +12,12 @@ import java.time.LocalDateTime;
 @Component
 public class CommentMapper {
 
-    //Преобразование сущности в DTO комментария
-
+    /**
+     * Преобразование сущности "комментарии" в DTO. Выполняется проверка на null.
+     *
+     * @param commentEntity - сущность "комментарий".
+     * @return - ДТО "комментарий".
+     */
     public Comment toCommentDto(CommentEntity commentEntity) {
         if (commentEntity == null) {
             return null;
@@ -29,8 +33,14 @@ public class CommentMapper {
         return comment;
     }
 
-    //Преобразование DTO создания в сущность
-
+    /**
+     * Преобразование DTO в сущность при создании/обновления комментария. Выполняется проверка на null.
+     *
+     * @param createComment - ДТО "комментарий".
+     * @param author        - автор комментария.
+     * @param ad            - сущность "объявление".
+     * @return сущность "комментарий".
+     */
     public CommentEntity toCommentEntity(CreateOrUpdateComment createComment, UserEntity author, AdEntity ad) {
         if (createComment == null) {
             return null;
@@ -44,8 +54,12 @@ public class CommentMapper {
         return commentEntity;
     }
 
-    //Обновление существующей сущности данными из DTO
-
+    /**
+     * Обновление существующей сущности "комментарии" данными из DTO. Выполняется проверка на null.
+     *
+     * @param commentEntity - сущность "комментарий".
+     * @param updateComment - ДТО "комментарий".
+     */
     public void updateCommentEntityFromDto(CommentEntity commentEntity, CreateOrUpdateComment updateComment) {
         if (commentEntity == null || updateComment == null) {
             return;

@@ -8,8 +8,12 @@ import ru.skypro.homework.entity.UserEntity;
 @Component
 public class UserMapper {
 
-    //Преобразование сущности в DTO пользователя
-
+    /**
+     * Преобразование сущности "пользователь" в DTO. Выполняется проверка на null.
+     *
+     * @param userEntity - сущность "пользователь".
+     * @return - ДТО.
+     */
     public User toUserDto(UserEntity userEntity) {
         if (userEntity == null) {
             return null;
@@ -26,8 +30,12 @@ public class UserMapper {
         return user;
     }
 
-    //Преобразование DTO обновления в сущность
-
+    /**
+     * Преобразование DTO в сущность "пользователь" при обновлении. Выполняется проверка на null.
+     *
+     * @param userEntity сущность "пользователь".
+     * @param updateUser - ДТО.
+     */
     public void updateUserEntityFromDto(UserEntity userEntity, UpdateUser updateUser) {
         if (userEntity == null || updateUser == null) {
             return;

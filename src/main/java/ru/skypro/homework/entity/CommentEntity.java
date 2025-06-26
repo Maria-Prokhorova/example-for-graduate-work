@@ -1,17 +1,20 @@
 package ru.skypro.homework.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
+@Data
 public class CommentEntity {
 
     @Schema(description = "id комментария")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer pk;
+    private Integer id;
 
     @Schema(description = "текст комментария")
     @Column(name = "text")
@@ -19,57 +22,25 @@ public class CommentEntity {
 
     @Schema(description = "дата и время создания комментария в миллисекундах с 00:00:00 01.01.1970")
     @Column(name = "data_time")
-    private Long createdAt;
+    private LocalDateTime createdAt;
 
     @Schema(description = "объявление")
     @ManyToOne
-    @JoinColumn(name = "ads_pk")
-    private AdEntity adEntity;
+    @JoinColumn(name = "ads_id")
+    private AdEntity ad;
 
     @Schema(description = "id автора комментария")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
-    private UserEntity userEntity;
+    private UserEntity author;
 
     public CommentEntity() {
     }
 
-    public CommentEntity(String text, Long createdAt, AdEntity adEntity, UserEntity userEntity) {
+    public CommentEntity(String text, LocalDateTime createdAt, AdEntity ad, UserEntity author) {
         this.text = text;
         this.createdAt = createdAt;
-        this.adEntity = adEntity;
-        this.userEntity = userEntity;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Long getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Long createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public AdEntity getAd() {
-        return adEntity;
-    }
-
-    public void setAd(AdEntity adEntity) {
-        this.adEntity = adEntity;
-    }
-
-    public UserEntity getUser() {
-        return userEntity;
-    }
-
-    public void setUser(UserEntity userEntity) {
-        this.userEntity = userEntity;
+        this.ad = ad;
+        this.author = author;
     }
 }

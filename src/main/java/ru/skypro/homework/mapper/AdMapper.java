@@ -10,8 +10,12 @@ import ru.skypro.homework.entity.UserEntity;
 @Component
 public class AdMapper {
 
-    //Преобразование сущности в DTO для списка объявлений
-
+    /**
+     * Преобразование сущности в DTO для объявлений. Выполняется проверка на null.
+     *
+     * @param adEntity - сущность "объявление".
+     * @return ДТО "объявление".
+     */
     public Ad toAdDto(AdEntity adEntity) {
         if (adEntity == null) {
             return null;
@@ -26,8 +30,12 @@ public class AdMapper {
         return ad;
     }
 
-    //Преобразование сущности в расширенный DTO
-
+    /**
+     * Преобразование сущности в расширенный DTO для объявлений. Выполняется проверка на null.
+     *
+     * @param adEntity сущность "объявление".
+     * @return ДТО "объявление" с расширенным набором полей.
+     */
     public ExtendedAd toExtendedAdDto(AdEntity adEntity) {
         if (adEntity == null) {
             return null;
@@ -46,8 +54,13 @@ public class AdMapper {
         return extendedAd;
     }
 
-    //Преобразование DTO для создания/обновления в сущность
-
+    /**
+     * Преобразование DTO в сущность при создании/обновления объявления. Выполняется проверка на null.
+     *
+     * @param createOrUpdateAd - ДТО "объявления".
+     * @param author           - информация об авторе.
+     * @return сущность "объявление".
+     */
     public AdEntity toAdEntity(CreateOrUpdateAd createOrUpdateAd, UserEntity author) {
         if (createOrUpdateAd == null) {
             return null;
@@ -61,9 +74,12 @@ public class AdMapper {
         return adEntity;
     }
 
-
-    // Обновление существующей сущности данными из DTO
-
+    /**
+     * Обновление существующей сущности "объявление" данными из DTO. Выполняется проверка на null.
+     *
+     * @param adEntity - сущность "объявление".
+     * @param updateAd - ДТО.
+     */
     public void updateAdEntityFromDto(AdEntity adEntity, CreateOrUpdateAd updateAd) {
         if (adEntity == null || updateAd == null) {
             return;
