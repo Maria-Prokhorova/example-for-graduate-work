@@ -25,7 +25,7 @@ public class UserController {
     @Operation(summary = "Обновление пароля")
     @PostMapping("/set_password")
     public boolean updatePassword(@RequestBody NewPassword newPassword) {
-         return userService.updatePassword(newPassword);
+        return userService.updatePassword(newPassword);
     }
 
     @Operation(summary = "Получение информации об авторизованном пользователе")
@@ -43,6 +43,6 @@ public class UserController {
     @Operation(summary = "Обновление аватара авторизованного пользователя")
     @PatchMapping("me/image")
     public boolean updateAvatarUser(@RequestBody String image) {
-         return userService.updateAvatarUser(image);
+        return userService.updateAvatarUser(image);
     }
 }
