@@ -17,4 +17,8 @@ public class ImageNotFoundException extends RuntimeException {
     public ImageNotFoundException(Integer id) {
         super("Изображение с id " + id + " не найдено");
     }
+    
+    public ImageNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 } 
