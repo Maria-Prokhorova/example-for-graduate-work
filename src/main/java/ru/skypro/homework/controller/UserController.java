@@ -3,7 +3,9 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.register.NewPassword;
 import ru.skypro.homework.dto.register.UpdateUser;
 import ru.skypro.homework.dto.user.User;
@@ -41,8 +43,8 @@ public class UserController {
     }
 
     @Operation(summary = "Обновление аватара авторизованного пользователя")
-    @PatchMapping("me/image")
-    public boolean updateAvatarUser(@RequestBody String image) {
-        return userService.updateAvatarUser(image);
+    @PatchMapping(value = "me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void updateAvatarUser(@RequestParam MultipartFile image) {
+        userService.updateAvatarUser(image);
     }
 }
