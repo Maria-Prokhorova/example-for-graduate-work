@@ -1,3 +1,7 @@
 databaseChangeLog:
   - include:
       file: liquibase/scripts/user.sql
+  - include:
+      file: liquibase/scripts/users_add_enabled_flag.sql
+  - include:
+      file: liquibase/scripts/users_increase_password_length.sql
