@@ -2,15 +2,20 @@ package ru.skypro.homework.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Data
-public class UserEntity {
+public class UserEntity implements UserDetails {
 
     @Schema(description = "id пользователя")
     @Id
@@ -46,6 +51,10 @@ public class UserEntity {
     @Column(name = "image")
     private String imagePath;
 
+    @Schema(description = "признак активного аккаунта")
+    @Column(name = "enabled")
+    private boolean enabled;
+
     @OneToMany(mappedBy = "author")
     private Set<CommentEntity> commentsByUser = new HashSet<>();
 
@@ -66,4 +75,30 @@ public class UserEntity {
         this.commentsByUser = commentsByUser;
         this.adsByUser = adsByUser;
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return enabled;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return enabled;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return enabled;
+    }
+
 }
