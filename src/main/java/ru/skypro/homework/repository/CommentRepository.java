@@ -7,14 +7,13 @@ import org.springframework.stereotype.Repository;
 import ru.skypro.homework.entity.CommentEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
 
     @Query(value = "SELECT COUNT(*) FROM comments WHERE ads_id =: adId", nativeQuery = true)
-    public Integer getAmountCommentsByAdID(@Param("adId") Integer adId);
+    Integer getAmountCommentsByAdID(@Param("adId") Integer adId);
 
     @Query(value = "SELECT * FROM comments WHERE ads_id =: adId", nativeQuery = true)
-    public List<CommentEntity> getListCommentEntityByAdID(@Param("adId") Integer adId);
+    List<CommentEntity> getListCommentEntityByAdID(@Param("adId") Integer adId);
 }
