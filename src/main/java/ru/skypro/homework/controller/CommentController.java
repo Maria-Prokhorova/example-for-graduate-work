@@ -42,6 +42,6 @@ public class CommentController {
     @Operation(summary = "Обновление комментария")
     @PatchMapping("/{adId}/comments/{commentId}")
     public Comment updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody String textComment) {
-        return commentService.upDateComment(adId, commentId, textComment);
+        return commentService.updateComment(adId, commentId, textComment);
     }
 }
