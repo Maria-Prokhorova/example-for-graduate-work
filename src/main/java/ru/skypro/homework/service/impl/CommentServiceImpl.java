@@ -15,10 +15,8 @@ import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.CommentService;
 import ru.skypro.homework.service.SecurityService;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CommentServiceImpl implements CommentService {
