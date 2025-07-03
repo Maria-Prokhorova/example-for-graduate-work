@@ -3,7 +3,9 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ad.Ad;
 import ru.skypro.homework.dto.ad.Ads;
 import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
@@ -30,9 +32,9 @@ public class AdController {
     }
 
     @Operation(summary = "Добавление объявления")
-    @PostMapping()
-    public Ad addAd(@RequestBody CreateOrUpdateAd newAd) {
-        return adService.addAd(newAd);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Ad addAd(@RequestBody CreateOrUpdateAd newAd, @RequestParam MultipartFile image) {
+        return adService.addAd(newAd, image);
     }
 
     @Operation(summary = "Получение информации об объявлении")
@@ -60,8 +62,8 @@ public class AdController {
     }
 
     @Operation(summary = "Обновление картинки объявлений")
-    @PatchMapping("/{id}/image")
-    public String updateAvatarAd(@PathVariable Integer id, @RequestBody String image) {
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String updateAvatarAd(@PathVariable Integer id, @RequestParam MultipartFile image) {
         return adService.updateAvatarAd(id, image);
     }
 }

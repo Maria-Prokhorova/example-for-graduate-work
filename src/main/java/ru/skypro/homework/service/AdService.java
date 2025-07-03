@@ -1,5 +1,7 @@
 package ru.skypro.homework.service;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ad.Ad;
 import ru.skypro.homework.dto.ad.Ads;
 import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
@@ -9,15 +11,15 @@ public interface AdService {
 
     Ads getAllAds();
 
-    Ad addAd(CreateOrUpdateAd newAd);
+    Ad addAd(CreateOrUpdateAd newAd, MultipartFile image);
 
     ExtendedAd getInfoAboutAd(Integer adId);
 
-    boolean deleteAd(Integer adId);
+    void deleteAd(Integer adId);
 
     Ad updateInfoAboutAd(Integer adId, CreateOrUpdateAd updateAd);
 
     Ads getAdsByUser();
 
-    String updateAvatarAd(Integer adId, String image);
+    String updateAvatarAd(Integer adId, MultipartFile image);
 }
