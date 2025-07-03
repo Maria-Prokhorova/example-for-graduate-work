@@ -24,27 +24,60 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Обновляет пароль текущего пользователя.
+     *
+     * @param newPassword - объект с текущим и новым паролем
+     * @return true если пароль успешно обновлен
+     */
     @Operation(summary = "Обновление пароля")
     @PostMapping("/set_password")
     public boolean updatePassword(@RequestBody NewPassword newPassword) {
         return userService.updatePassword(newPassword);
     }
 
+    /**
+     * Получает информацию о текущем пользователе.
+     *
+     * @return информация о текущем пользователе
+     */
     @Operation(summary = "Получение информации об авторизованном пользователе")
     @GetMapping("/me")
     public User getInfoAboutUser() {
         return userService.getInfoAboutUser();
     }
 
+    /**
+     * Обновляет информацию о текущем пользователе.
+     *
+     * @param newInfoUser - новые данные пользователя
+     * @return обновленная информация о пользователе
+     */
     @Operation(summary = "Обновление информации об авторизованном пользователе")
     @PatchMapping("/me")
     public UpdateUser updateInfoAboutUser(@RequestBody UpdateUser newInfoUser) {
         return userService.updateInfoAboutUser(newInfoUser);
     }
 
+    /**
+     * Обновляет аватар текущего пользователя.
+     *
+     * @param image - файл нового аватара
+     */
     @Operation(summary = "Обновление аватара авторизованного пользователя")
-    @PatchMapping(value = "me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateAvatarUser(@RequestParam MultipartFile image) {
+    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void updateAvatarUser(@RequestParam("image") MultipartFile image) {
         userService.updateAvatarUser(image);
+    }
+
+    /**
+     * Получает аватар текущего пользователя.
+     *
+     * @return аватар пользователя
+     */
+    @Operation(summary = "Получение аватара авторизованного пользователя")
+    @GetMapping(value = "/me/image", produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getUserAvatar() {
+        return userService.getUserAvatar();
     }
 }
