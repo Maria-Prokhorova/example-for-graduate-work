@@ -33,7 +33,7 @@ public class AdController {
 
     @Operation(summary = "Добавление объявления")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Ad addAd(@RequestBody CreateOrUpdateAd newAd, @RequestParam MultipartFile image) {
+    public Ad addAd(@RequestPart("newAd") CreateOrUpdateAd newAd, @RequestPart("image") MultipartFile image) {
         return adService.addAd(newAd, image);
     }
 
