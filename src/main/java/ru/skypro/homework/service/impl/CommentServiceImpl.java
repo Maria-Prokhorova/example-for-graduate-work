@@ -103,21 +103,15 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public Comment updateComment(Integer idAd, Integer commentId, String textComment) {
-        AdEntity adEntity = adRepository
+        adRepository
                 .findById(idAd)
                 .orElseThrow(() -> new AdNotFoundException(idAd));
-        commentRepository
+        CommentEntity commentEntity = commentRepository
                 .findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(commentId));
 
         CreateOrUpdateComment createComment = new CreateOrUpdateComment();
-        UserEntity userEntity = securityService.getCurrentUser();
-        createComment.setText(textComment);
-        CommentEntity commentEntity = commentMapper.toCommentEntity(
-                createComment,
-                userEntity,
-                adEntity
-        );
+        commentMapper.updateCommentEntityFromDto(commentEntity, createComment);
         commentRepository.save(commentEntity);
         return commentMapper.toCommentDto(commentEntity);
     }

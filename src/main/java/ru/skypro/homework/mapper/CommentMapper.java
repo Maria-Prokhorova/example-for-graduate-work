@@ -28,7 +28,7 @@ public class CommentMapper {
         comment.setAuthor(commentEntity.getAuthor().getId());
         comment.setAuthorFirstName(commentEntity.getAuthor().getFirstName());
         comment.setAuthorImage(commentEntity.getAuthor().getImagePath());
-        comment.setCreatedAt(commentEntity.getCreatedAt().toEpochSecond(java.time.ZoneOffset.UTC) * 1000);
+        comment.setCreatedAt(commentEntity.getCreatedAt());
         comment.setText(commentEntity.getText());
         return comment;
     }
@@ -64,7 +64,6 @@ public class CommentMapper {
         if (commentEntity == null || updateComment == null) {
             return;
         }
-
         commentEntity.setText(updateComment.getText());
     }
 } 
