@@ -41,10 +41,14 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public Comments getComments(Integer idAd) {
+        adRepository
+                .findById(idAd)
+                .orElseThrow(() -> new AdNotFoundException(idAd));
+
         Comments comments = new Comments();
         comments.setCount(commentRepository.getAmountCommentsByAdID(idAd));
         if (comments.getCount() == 0) {
-            throw new AdNotFoundException(idAd);
+            throw new CommentNotFoundException(idAd);
         }
 
         List<Comment> commentList = new ArrayList<>(comments.getCount());
@@ -63,7 +67,9 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public Comment addComment(Integer idAd, String textComment) {
-        AdEntity adEntity = adRepository.findById(idAd).orElseThrow(() -> new AdNotFoundException(idAd));
+        AdEntity adEntity = adRepository
+                .findById(idAd)
+                .orElseThrow(() -> new AdNotFoundException(idAd));
         CreateOrUpdateComment createComment = new CreateOrUpdateComment();
         UserEntity userEntity = securityService.getCurrentUser();
         createComment.setText(textComment);

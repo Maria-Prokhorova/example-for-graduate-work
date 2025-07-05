@@ -8,18 +8,26 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.skypro.homework.dto.comment.Comment;
 import ru.skypro.homework.dto.comment.Comments;
+import ru.skypro.homework.dto.comment.CreateOrUpdateComment;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.exception.AdNotFoundException;
+import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
+import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.CommentRepository;
+import ru.skypro.homework.service.SecurityService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,17 +38,27 @@ public class CommentServiceImplTest {
     CommentRepository commentRepository;
 
     @Mock
+    AdRepository adRepository;
+
+    @Mock
     CommentMapper commentMapper;
+
+    @Mock
+    private SecurityService securityService;
 
     @InjectMocks
     CommentServiceImpl commentService;
 
     UserEntity testUser;
     AdEntity testAd;
-    CommentEntity testComment;
+    CommentEntity testCommentEntity;
     Comment testCommentDTO;
     Comments testCommentsDTO;
+    CreateOrUpdateComment testCreateOrUpdateComment;
 
+    /**
+     * Подготовка тестовых данных перед каждым методом
+     */
     @BeforeEach
     void setUp() {
         testUser = new UserEntity();
@@ -61,41 +79,80 @@ public class CommentServiceImplTest {
         testAd.setImagePath("/avatar.jpg");
         testAd.setPrice(10000);
 
-        testComment = new CommentEntity();
-        testComment.setId(1);
-        testComment.setText("text");
-        testComment.setAuthor(testUser);
-        testComment.setCreatedAt(LocalDateTime.now());
-        testComment.setAd(testAd);
+        testCommentEntity = new CommentEntity();
+        testCommentEntity.setId(1);
+        testCommentEntity.setText("text");
+        testCommentEntity.setAuthor(testUser);
+        testCommentEntity.setCreatedAt(LocalDateTime.now());
+        testCommentEntity.setAd(testAd);
 
-        testAd.setCommentsInAd(Set.of(testComment));
+        testAd.setCommentsInAd(Set.of(testCommentEntity));
 
         testCommentDTO = new Comment();
-        testCommentDTO.setAuthor(testComment.getAuthor().getId());
-        testCommentDTO.setText(testComment.getText());
-        testCommentDTO.setAuthorImage(testComment.getAuthor().getImagePath());
-        testCommentDTO.setPk(testComment.getId());
-        testCommentDTO.setAuthorFirstName(testComment.getAuthor().getFirstName());
-        testCommentDTO.setCreatedAt(testComment.getCreatedAt());
+        testCommentDTO.setAuthor(testCommentEntity.getAuthor().getId());
+        testCommentDTO.setText(testCommentEntity.getText());
+        testCommentDTO.setAuthorImage(testCommentEntity.getAuthor().getImagePath());
+        testCommentDTO.setPk(testCommentEntity.getId());
+        testCommentDTO.setAuthorFirstName(testCommentEntity.getAuthor().getFirstName());
+        testCommentDTO.setCreatedAt(testCommentEntity.getCreatedAt());
 
         testCommentsDTO = new Comments();
         testCommentsDTO.setCount(1);
         testCommentsDTO.setResults(List.of(testCommentDTO));
     }
 
+    /**
+     * Тест успешного предоставления всех комментариев
+     */
     @Test
-    void shouldReturnResultOfGetCommentsWhenCommentsIsExists() {
+    void shouldReturnResultOfGetCommentsWhenCommentsExist() {
         when(commentRepository.getAmountCommentsByAdID(1))
                 .thenReturn(1);
         when(commentRepository.getListCommentEntityByAdID(1))
-                .thenReturn(List.of(testComment));
-        when(commentMapper.toCommentDto(testComment)).thenReturn(testCommentDTO);
+                .thenReturn(List.of(testCommentEntity));
+        when(commentMapper.toCommentDto(testCommentEntity)).thenReturn(testCommentDTO);
 
         Comments result = commentService.getComments(1);
 
         assertEquals(testCommentsDTO, result);
         verify(commentRepository).getAmountCommentsByAdID(1);
         verify(commentRepository).getListCommentEntityByAdID(1);
-        verify(commentMapper).toCommentDto(testComment);
+        verify(commentMapper).toCommentDto(testCommentEntity);
+    }
+
+    /**
+     * Тест на выброс исключения - AdNotFoundException
+     */
+    @Test
+    void shouldReturnResultOfGetCommentsWhenAdDoNotExists() {
+        when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
+
+        assertThrows(AdNotFoundException.class, () -> adRepository.findById(2));
+    }
+
+    /**
+     * Тест на выброс исключения - CommentNotFoundException
+     */
+    @Test
+    void shouldReturnResultOfGetCommentsWhenCommentsDoNotExists() {
+        when(commentRepository.getAmountCommentsByAdID(2)).thenReturn(0);
+
+        assertThrows(CommentNotFoundException.class, () -> commentService.getComments(2));
+    }
+
+    @Test
+    void shouldReturnResultOfAddCommentWhenCommentWasAdded() {
+        when(adRepository.findById(1))
+                .thenReturn(Optional.of(testAd));
+        when(securityService.getCurrentUser())
+                .thenReturn(testUser);
+        when(commentMapper.toCommentEntity(testCreateOrUpdateComment, testUser, testAd))
+                .thenReturn(testCommentEntity);
+        when(commentRepository.save(any(CommentEntity.class)))
+                .thenReturn(testCommentEntity);
+        when(commentMapper.toCommentDto(testCommentEntity)).thenReturn(testCommentDTO);
+
+        assertEquals(testCommentDTO, commentService.addComment(1, "text"));
+
     }
 }
