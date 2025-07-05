@@ -1,7 +1,6 @@
 package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ad.Ad;
 import ru.skypro.homework.dto.ad.Ads;
@@ -12,22 +11,28 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.SecurityService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AdServiceImpl implements AdService {
 
-    private final AdRepository repository;
+    private final AdRepository adRepository;
+    private final UserRepository userRepository;
     private final AdMapper adMapper;
     private final ImageService imageService;
     private final SecurityService securityService;
 
-    public AdServiceImpl(AdRepository repository, AdMapper adMapper, ImageService imageService, SecurityService securityService) {
-        this.repository = repository;
+    public AdServiceImpl(AdRepository adRepository, UserRepository userRepository, AdMapper adMapper, ImageService imageService, SecurityService securityService) {
+        this.adRepository = adRepository;
+        this.userRepository = userRepository;
         this.adMapper = adMapper;
         this.imageService = imageService;
         this.securityService = securityService;
@@ -40,7 +45,15 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public Ads getAllAds() {
-        return (Ads) repository.findAll();
+        List<AdEntity> adEntityList = adRepository.findAll();
+        List<Ad> adsList =
+                adEntityList.stream()
+                        .map(x -> adMapper.toAdDto(x))
+                        .collect(Collectors.toList());
+        Ads adsResult = new Ads();
+        adsResult.setCount(adsList.size());
+        adsResult.setResults(adsList);
+        return adsResult;
     }
 
     /**
@@ -54,9 +67,10 @@ public class AdServiceImpl implements AdService {
     public Ad addAd(CreateOrUpdateAd newAd, MultipartFile image) {
         UserEntity userEntity = securityService.getCurrentUser();
         AdEntity createAdEntity = adMapper.toAdEntity(newAd, userEntity);
+
         String imagePath = imageService.saveImage(image);
         createAdEntity.setImagePath(imagePath);
-        repository.save(createAdEntity);
+        adRepository.save(createAdEntity);
         return adMapper.toAdDto(createAdEntity);
     }
 
@@ -70,8 +84,13 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public ExtendedAd getInfoAboutAd(Integer adId) {
-        Optional<AdEntity> ad = repository.findById(adId);
-        return adMapper.toExtendedAdDto(ad.orElse(null));
+
+        Optional<AdEntity> ad = adRepository.findById(adId);
+        if (ad.isPresent()) {
+            return adMapper.toExtendedAdDto(ad.orElse(null));
+        } else {
+            throw new AdNotFoundException(adId);
+        }
     }
 
     /**
@@ -81,10 +100,19 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public void deleteAd(Integer adId) {
-        Optional<AdEntity> ad = repository.findById(adId);
-        if (ad.isPresent()) {
-            repository.delete(ad.orElse(null));
-        } else throw new AdNotFoundException(adId);
+        // Проверяем если ли объявление с таким номером в БД
+        Optional<AdEntity> ad = adRepository.findById(adId);
+        if (ad.isEmpty()) {
+            throw new AdNotFoundException(adId);
+        }
+
+        // Проверяем есть ли права на удаление объявления
+        securityService.checkPermissionToDeleteAd(ad.get());
+
+        // Проверяем является текущей пользователь автором объявления или админом
+        if (securityService.isOwnerOfAd(ad.orElse(null))) {
+            adRepository.delete(ad.orElse(null));
+        }
     }
 
     /**
@@ -96,9 +124,18 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public Ad updateInfoAboutAd(Integer adId, CreateOrUpdateAd updateAd) {
-        Optional<AdEntity> ad = repository.findById(adId);
+        // Проверяем если ли объявление с таким номером в БД
+        Optional<AdEntity> ad = adRepository.findById(adId);
+        if (ad.isEmpty()) {
+            throw new AdNotFoundException(adId);
+        }
+
+        // Проверяем права на редактирование объявления
+        securityService.checkPermissionToEditAd(ad.orElse(null));
+
         adMapper.updateAdEntityFromDto(ad.orElse(null), updateAd);
-        Optional<AdEntity> newAdAfterUpdate = repository.findById(adId);
+        Optional<AdEntity> newAdAfterUpdate = adRepository.findById(adId);
+        adRepository.save(newAdAfterUpdate.orElse(null));
         return adMapper.toAdDto(newAdAfterUpdate.orElse(null));
     }
 
@@ -109,8 +146,22 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public Ads getAdsByUser() {
+
+        // Получаем информацию об авторизованном пользователе
         UserEntity userEntity = securityService.getCurrentUser();
-        return (Ads) userEntity.getAdsByUser();
+
+        List<AdEntity> adEntityList = adRepository.findByIdUser(userEntity.getId());
+
+        List<Ad> adsList =
+                new ArrayList<>();
+        for (AdEntity x : adEntityList) {
+            Ad adDto = adMapper.toAdDto(x);
+            adsList.add(adDto);
+        }
+        Ads adsResult = new Ads();
+        adsResult.setCount(adsList.size());
+        adsResult.setResults(adsList);
+        return adsResult;
     }
 
     /**
@@ -124,13 +175,21 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public String updateAvatarAd(Integer adId, MultipartFile image) {
-        Optional<AdEntity> ad = repository.findById(adId);
+        // Проверяем если ли объявление с таким номером в БД
+        Optional<AdEntity> ad = adRepository.findById(adId);
+        if (ad.isEmpty()) {
+            throw new AdNotFoundException(adId);
+        }
+
+        // Проверяем права на редактирование объявления
+        securityService.checkPermissionToEditAd(ad.orElse(null));
+
         // Сохраняем изображение
         String imagePath = imageService.saveImage(image);
 
         // Обновляем путь к картинке
         ad.get().setImagePath(imagePath);
-        repository.save(ad.orElse(null));
+        adRepository.save(ad.orElse(null));
         return ad.get().getImagePath();
     }
 }
