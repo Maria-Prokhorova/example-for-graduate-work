@@ -9,8 +9,8 @@ public interface CommentService {
 
     Comment addComment(Integer idAd, String textComment);
 
-    boolean deleteComment(Integer adId, Integer commentId);
+    void deleteComment(Integer adId, Integer commentId);
 
-    Comment upDateComment(Integer adId, Integer commentId, String textComment);
+    Comment updateComment(Integer adId, Integer commentId, String textComment);
 
 }

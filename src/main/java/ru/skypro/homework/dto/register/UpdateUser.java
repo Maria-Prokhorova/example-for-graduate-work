@@ -15,6 +15,6 @@ public class UpdateUser {
     @Schema(description = "фамилия пользователя", minLength = 3, maxLength = 10)
     private String lastName;
 
-    @Schema(description = "телефон пользователя", pattern = "\+7\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}")
+    @Schema(description = "телефон пользователя", pattern = "\\+7\\s?\\(?\\d{3}\\)?\\s?\\d{3}-?\\d{2}-?\\d{2}")
     private String phone;
 }

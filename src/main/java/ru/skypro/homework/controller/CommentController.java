@@ -30,18 +30,18 @@ public class CommentController {
     @Operation(summary = "Добавление комментария к объявлению")
     @PostMapping("/{id}/comments")
     public Comment addComment(@PathVariable Integer id, @RequestBody String textComment) {
-       return commentService.addComment(id, textComment);
+        return commentService.addComment(id, textComment);
     }
 
     @Operation(summary = "Удаление комментария")
     @DeleteMapping("/{adId}/comments/{commentId}")
     public void deleteComment(@PathVariable Integer adId, @PathVariable Integer commentId) {
-       commentService.deleteComment(adId, commentId);
+        commentService.deleteComment(adId, commentId);
     }
 
     @Operation(summary = "Обновление комментария")
     @PatchMapping("/{adId}/comments/{commentId}")
     public Comment updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody String textComment) {
-        return commentService.upDateComment(adId, commentId, textComment);
+        return commentService.updateComment(adId, commentId, textComment);
     }
 }

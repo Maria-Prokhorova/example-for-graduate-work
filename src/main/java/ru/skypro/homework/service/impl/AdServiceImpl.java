@@ -1,47 +1,195 @@
 package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ad.Ad;
 import ru.skypro.homework.dto.ad.Ads;
 import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ad.ExtendedAd;
+import ru.skypro.homework.entity.AdEntity;
+import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.exception.AdNotFoundException;
+import ru.skypro.homework.mapper.AdMapper;
+import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.ImageService;
+import ru.skypro.homework.service.SecurityService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AdServiceImpl implements AdService {
 
+    private final AdRepository adRepository;
+    private final UserRepository userRepository;
+    private final AdMapper adMapper;
+    private final ImageService imageService;
+    private final SecurityService securityService;
+
+    public AdServiceImpl(AdRepository adRepository, UserRepository userRepository, AdMapper adMapper, ImageService imageService, SecurityService securityService) {
+        this.adRepository = adRepository;
+        this.userRepository = userRepository;
+        this.adMapper = adMapper;
+        this.imageService = imageService;
+        this.securityService = securityService;
+    }
+
+    /**
+     * Получение всех объявлений.
+     *
+     * @return возвращает список всех объявлений в виде ДТО Ads.
+     */
     @Override
     public Ads getAllAds() {
-        return null;
+        List<AdEntity> adEntityList = adRepository.findAll();
+        List<Ad> adsList =
+                adEntityList.stream()
+                        .map(x -> adMapper.toAdDto(x))
+                        .collect(Collectors.toList());
+        Ads adsResult = new Ads();
+        adsResult.setCount(adsList.size());
+        adsResult.setResults(adsList);
+        return adsResult;
     }
 
+    /**
+     * Добавление объявлений.
+     *
+     * @param newAd информация об объявлении.
+     * @param image - картинка объявления.
+     * @return - ДТО ad.
+     */
     @Override
-    public Ad addAd(CreateOrUpdateAd newAd){
-        return null;
+    public Ad addAd(CreateOrUpdateAd newAd, MultipartFile image) {
+        UserEntity userEntity = securityService.getCurrentUser();
+        AdEntity createAdEntity = adMapper.toAdEntity(newAd, userEntity);
+
+        String imagePath = imageService.saveImage(image);
+        createAdEntity.setImagePath(imagePath);
+        adRepository.save(createAdEntity);
+        return adMapper.toAdDto(createAdEntity);
     }
 
+    /**
+     * Получение информации об объявлении.
+     * Сначала находим в БД объявление по его id, затем с помощью маппера сущность "Объявление"
+     * переводим в нужную нам ДТО.
+     *
+     * @param adId - id объявления.
+     * @return ДТО ExtendedAd.
+     */
     @Override
     public ExtendedAd getInfoAboutAd(Integer adId) {
-        return null;
+
+        Optional<AdEntity> ad = adRepository.findById(adId);
+        if (ad.isPresent()) {
+            return adMapper.toExtendedAdDto(ad.orElse(null));
+        } else {
+            throw new AdNotFoundException(adId);
+        }
     }
 
+    /**
+     * Удаление объявления.
+     *
+     * @param adId - id объявления.
+     */
     @Override
-    public boolean deleteAd(Integer adId){
-        return true;
+    public void deleteAd(Integer adId) {
+        // Проверяем если ли объявление с таким номером в БД
+        Optional<AdEntity> ad = adRepository.findById(adId);
+        if (ad.isEmpty()) {
+            throw new AdNotFoundException(adId);
+        }
+
+        // Проверяем есть ли права на удаление объявления
+        securityService.checkPermissionToDeleteAd(ad.get());
+
+        // Проверяем является текущей пользователь автором объявления или админом
+        if (securityService.isOwnerOfAd(ad.orElse(null))) {
+            adRepository.delete(ad.orElse(null));
+        }
     }
 
+    /**
+     * Обновление информации об объявлении.
+     *
+     * @param adId     - id объявления.
+     * @param updateAd - ДТО updateAd - новая информация по объявлению.
+     * @return - ДТО ad.
+     */
     @Override
     public Ad updateInfoAboutAd(Integer adId, CreateOrUpdateAd updateAd) {
-        return null;
+        // Проверяем если ли объявление с таким номером в БД
+        Optional<AdEntity> ad = adRepository.findById(adId);
+        if (ad.isEmpty()) {
+            throw new AdNotFoundException(adId);
+        }
+
+        // Проверяем права на редактирование объявления
+        securityService.checkPermissionToEditAd(ad.orElse(null));
+
+        adMapper.updateAdEntityFromDto(ad.orElse(null), updateAd);
+        Optional<AdEntity> newAdAfterUpdate = adRepository.findById(adId);
+        adRepository.save(newAdAfterUpdate.orElse(null));
+        return adMapper.toAdDto(newAdAfterUpdate.orElse(null));
     }
 
+    /**
+     * Получение объявлений авторизованного пользователя.
+     *
+     * @return
+     */
     @Override
-    public Ads getAdsByUser(){
-        return null;
+    public Ads getAdsByUser() {
+
+        // Получаем информацию об авторизованном пользователе
+        UserEntity userEntity = securityService.getCurrentUser();
+
+        List<AdEntity> adEntityList = adRepository.findByIdUser(userEntity.getId());
+
+        List<Ad> adsList =
+                new ArrayList<>();
+        for (AdEntity x : adEntityList) {
+            Ad adDto = adMapper.toAdDto(x);
+            adsList.add(adDto);
+        }
+        Ads adsResult = new Ads();
+        adsResult.setCount(adsList.size());
+        adsResult.setResults(adsList);
+        return adsResult;
     }
 
+    /**
+     * Обновление картинки объявления.
+     * Сначала находим в БД объявление по его id. Затем сохраняем изображение.
+     * Обновляем путь к картинке у найденного объявления.
+     *
+     * @param adId  - id объявления.
+     * @param image - новая картинка объявления.
+     * @return возвращаем обновленный путь к новой картинке.
+     */
     @Override
-    public String updateAvatarAd(Integer adId, String image){
-        return null;
+    public String updateAvatarAd(Integer adId, MultipartFile image) {
+        // Проверяем если ли объявление с таким номером в БД
+        Optional<AdEntity> ad = adRepository.findById(adId);
+        if (ad.isEmpty()) {
+            throw new AdNotFoundException(adId);
+        }
+
+        // Проверяем права на редактирование объявления
+        securityService.checkPermissionToEditAd(ad.orElse(null));
+
+        // Сохраняем изображение
+        String imagePath = imageService.saveImage(image);
+
+        // Обновляем путь к картинке
+        ad.get().setImagePath(imagePath);
+        adRepository.save(ad.orElse(null));
+        return ad.get().getImagePath();
     }
 }
