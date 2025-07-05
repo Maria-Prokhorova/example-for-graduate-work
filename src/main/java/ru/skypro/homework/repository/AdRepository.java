@@ -1,17 +1,18 @@
 package ru.skypro.homework.repository;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.skypro.homework.entity.AdEntity;
-import ru.skypro.homework.entity.UserEntity;
 
 import java.util.List;
 
 @Repository
 public interface AdRepository extends JpaRepository<AdEntity, Integer> {
 
-    List<AdEntity> findByIdUser(Integer idUser);
+    @Query(value = "SELECT * FROM ads WHERE users_id = :idUser",
+            nativeQuery = true)
+    List<AdEntity> findByIdUser(@Param("idUser") Integer idUser);
 
-    List<AdEntity> findByUser(UserEntity User);
 }

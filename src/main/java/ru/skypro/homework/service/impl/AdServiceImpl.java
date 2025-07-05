@@ -146,12 +146,11 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public Ads getAdsByUser() {
+
         // Получаем информацию об авторизованном пользователе
         UserEntity userEntity = securityService.getCurrentUser();
-        Integer idUser = userEntity.getId();
 
-        List<AdEntity> adEntityList = adRepository.findAll();
-      //  List<AdEntity> adEntityList = adRepository.findByUser(userEntity);
+        List<AdEntity> adEntityList = adRepository.findByIdUser(userEntity.getId());
 
         List<Ad> adsList =
                 new ArrayList<>();
