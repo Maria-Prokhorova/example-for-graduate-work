@@ -15,6 +15,8 @@ import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ad.ExtendedAd;
 import ru.skypro.homework.service.AdService;
 
+import javax.validation.Valid;
+
 @Tag(name = "Объявления", description = "Раздел содержит методы по работе с объявлениями")
 @Slf4j
 @RestController
@@ -68,10 +70,11 @@ public class AdController {
     @Operation(summary = "Добавление объявления")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Ad addAd(@RequestPart("properties") CreateOrUpdateAd properties, @RequestPart("image") MultipartFile image) {
+    public Ad addAd(@Valid @RequestPart("properties") CreateOrUpdateAd properties, @RequestPart("image") MultipartFile image) {
         return adService.addAd(properties, image);
     }
 
@@ -123,12 +126,13 @@ public class AdController {
     @Operation(summary = "Обновление информации об объявлении")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
             @ApiResponse(responseCode = "404", description = "Not found", content = @Content)
     })
     @PatchMapping("/{id}")
-    public Ad updateInfoAboutAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAd updateAd) {
+    public Ad updateInfoAboutAd(@PathVariable Integer id, @Valid @RequestBody CreateOrUpdateAd updateAd) {
         return adService.updateInfoAboutAd(id, updateAd);
     }
 
@@ -149,7 +153,8 @@ public class AdController {
             @ApiResponse(responseCode = "404", description = "Not found", content = @Content)
     })
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String updateAvatarAd(@PathVariable Integer id, @RequestParam MultipartFile image) {
-        return adService.updateAvatarAd(id, image);
+    public byte[] updateAvatarAd(@PathVariable Integer id, @RequestParam MultipartFile image) {
+        String imagePath = adService.updateAvatarAd(id, image);
+        return imagePath.getBytes();
     }
 }
