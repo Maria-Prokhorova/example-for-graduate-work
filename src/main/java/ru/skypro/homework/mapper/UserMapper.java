@@ -25,8 +25,8 @@ public class UserMapper {
         user.setFirstName(userEntity.getFirstName());
         user.setLastName(userEntity.getLastName());
         user.setPhone(userEntity.getPhoneNumber());
-        user.setRole(userEntity.getRole());
-        user.setImage("/users/me/image");
+        user.setRole(userEntity.getRole().name());
+        user.setImage(userEntity.getImagePath() != null ? userEntity.getImagePath() : "/users/me/image");
         return user;
     }
 
