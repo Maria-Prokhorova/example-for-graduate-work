@@ -62,17 +62,15 @@ public class CommentServiceImpl implements CommentService {
      * Добавление нового комментария
      * к определенному объявлению
      * @param idAd id объявления
-     * @param textComment текст комментария
+     * @param createComment DTO с текстом комментария
      * @return DTO comment
      */
     @Override
-    public Comment addComment(Integer idAd, String textComment) {
+    public Comment addComment(Integer idAd, CreateOrUpdateComment createComment) {
         AdEntity adEntity = adRepository
                 .findById(idAd)
                 .orElseThrow(() -> new AdNotFoundException(idAd));
-        CreateOrUpdateComment createComment = new CreateOrUpdateComment();
         UserEntity userEntity = securityService.getCurrentUser();
-        createComment.setText(textComment);
         CommentEntity commentEntity = commentMapper.toCommentEntity(
                 createComment,
                 userEntity,
@@ -104,11 +102,11 @@ public class CommentServiceImpl implements CommentService {
      * к определенному объявлению
      * @param idAd id объявления
      * @param commentId id комментария
-     * @param textComment текст комментария
+     * @param updateComment DTO с новым текстом комментария
      * @return DTO comment
      */
     @Override
-    public Comment updateComment(Integer idAd, Integer commentId, String textComment) {
+    public Comment updateComment(Integer idAd, Integer commentId, CreateOrUpdateComment updateComment) {
         adRepository
                 .findById(idAd)
                 .orElseThrow(() -> new AdNotFoundException(idAd));
@@ -116,8 +114,7 @@ public class CommentServiceImpl implements CommentService {
                 .findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(commentId));
 
-        CreateOrUpdateComment createComment = new CreateOrUpdateComment();
-        commentMapper.updateCommentEntityFromDto(commentEntity, createComment);
+        commentMapper.updateCommentEntityFromDto(commentEntity, updateComment);
         commentRepository.save(commentEntity);
         return commentMapper.toCommentDto(commentEntity);
     }
