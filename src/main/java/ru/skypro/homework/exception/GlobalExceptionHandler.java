@@ -22,9 +22,9 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с статусом 404
      */
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
+    public ResponseEntity<Void> handleUserNotFoundException(UserNotFoundException e) {
         log.error("Пользователь не найден: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     /**
@@ -34,9 +34,9 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с статусом 404
      */
     @ExceptionHandler(AdNotFoundException.class)
-    public ResponseEntity<String> handleAdNotFoundException(AdNotFoundException e) {
+    public ResponseEntity<Void> handleAdNotFoundException(AdNotFoundException e) {
         log.error("Объявление не найдено: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     /**
@@ -46,9 +46,9 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с статусом 404
      */
     @ExceptionHandler(CommentNotFoundException.class)
-    public ResponseEntity<String> handleCommentNotFoundException(CommentNotFoundException e) {
+    public ResponseEntity<Void> handleCommentNotFoundException(CommentNotFoundException e) {
         log.error("Комментарий не найден: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     /**
@@ -58,9 +58,9 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с статусом 404
      */
     @ExceptionHandler(ImageNotFoundException.class)
-    public ResponseEntity<String> handleImageNotFoundException(ImageNotFoundException e) {
+    public ResponseEntity<Void> handleImageNotFoundException(ImageNotFoundException e) {
         log.error("Изображение не найдено: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     /**
@@ -82,9 +82,9 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с статусом 401
      */
     @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<String> handleInvalidPasswordException(InvalidPasswordException e) {
+    public ResponseEntity<Void> handleInvalidPasswordException(InvalidPasswordException e) {
         log.error("Неверный пароль: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     /**
@@ -94,9 +94,9 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с статусом 403
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
+    public ResponseEntity<Void> handleAccessDeniedException(AccessDeniedException e) {
         log.error("Доступ запрещен: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     /**
@@ -106,9 +106,9 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с статусом 401
      */
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
+    public ResponseEntity<Void> handleAuthenticationException(AuthenticationException e) {
         log.error("Ошибка аутентификации: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     /**
