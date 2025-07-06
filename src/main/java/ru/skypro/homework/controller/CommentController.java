@@ -14,7 +14,6 @@ import ru.skypro.homework.service.CommentService;
 
 @Tag(name = "Комментарии", description = "Раздел содержит методы по работе с комментариями объявлений")
 @Slf4j
-@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
 public class CommentController {

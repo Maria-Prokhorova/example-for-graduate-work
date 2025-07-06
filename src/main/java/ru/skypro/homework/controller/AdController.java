@@ -17,7 +17,6 @@ import ru.skypro.homework.service.AdService;
 
 @Tag(name = "Объявления", description = "Раздел содержит методы по работе с объявлениями")
 @Slf4j
-@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
 public class AdController {

@@ -18,7 +18,6 @@ import javax.validation.Valid;
 
 @Tag(name = "Пользователи", description = "Раздел содержит методы по работе личной информацией пользователя")
 @Slf4j
-@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
 public class UserController {
