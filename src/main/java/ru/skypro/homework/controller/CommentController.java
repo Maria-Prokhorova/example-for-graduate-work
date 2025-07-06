@@ -12,9 +12,10 @@ import ru.skypro.homework.dto.comment.Comments;
 import ru.skypro.homework.dto.comment.CreateOrUpdateComment;
 import ru.skypro.homework.service.CommentService;
 
+import javax.validation.Valid;
+
 @Tag(name = "Комментарии", description = "Раздел содержит методы по работе с комментариями объявлений")
 @Slf4j
-@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
 public class CommentController {
@@ -39,11 +40,12 @@ public class CommentController {
     @Operation(summary = "Добавление комментария к объявлению")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
             @ApiResponse(responseCode = "404", description = "Not found", content = @Content)
     })
     @PostMapping("/{id}/comments")
-    public Comment addComment(@PathVariable Integer id, @RequestBody CreateOrUpdateComment createComment) {
+    public Comment addComment(@PathVariable Integer id, @Valid @RequestBody CreateOrUpdateComment createComment) {
         return commentService.addComment(id, createComment);
     }
 
@@ -62,12 +64,13 @@ public class CommentController {
     @Operation(summary = "Обновление комментария")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
             @ApiResponse(responseCode = "404", description = "Not found", content = @Content)
     })
     @PatchMapping("/{adId}/comments/{commentId}")
-    public Comment updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @RequestBody CreateOrUpdateComment updateComment) {
+    public Comment updateComment(@PathVariable Integer adId, @PathVariable Integer commentId, @Valid @RequestBody CreateOrUpdateComment updateComment) {
         return commentService.updateComment(adId, commentId, updateComment);
     }
 }
