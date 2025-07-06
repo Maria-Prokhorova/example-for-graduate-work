@@ -11,7 +11,6 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
-import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.SecurityService;
@@ -25,14 +24,12 @@ import java.util.stream.Collectors;
 public class AdServiceImpl implements AdService {
 
     private final AdRepository adRepository;
-    private final UserRepository userRepository;
     private final AdMapper adMapper;
     private final ImageService imageService;
     private final SecurityService securityService;
 
-    public AdServiceImpl(AdRepository adRepository, UserRepository userRepository, AdMapper adMapper, ImageService imageService, SecurityService securityService) {
+    public AdServiceImpl(AdRepository adRepository, AdMapper adMapper, ImageService imageService, SecurityService securityService) {
         this.adRepository = adRepository;
-        this.userRepository = userRepository;
         this.adMapper = adMapper;
         this.imageService = imageService;
         this.securityService = securityService;
