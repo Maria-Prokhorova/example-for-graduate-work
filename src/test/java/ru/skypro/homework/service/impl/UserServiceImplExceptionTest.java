@@ -143,18 +143,7 @@ class UserServiceImplExceptionTest {
         verify(passwordEncoder).matches("oldPassword", "encodedPassword");
     }
 
-    /**
-     * Тест обработки исключений от ImageService при получении аватара.
-     * Метод: getUserAvatar
-     * Сценарий: ImageService выбрасывает исключение при неудачном получении аватара
-     */
-    @Test
-    void getUserAvatar_WhenImageServiceThrowsException_ShouldPropagateException() {
-        when(imageService.getUserAvatar()).thenThrow(new RuntimeException("Image service error"));
 
-        assertThrows(RuntimeException.class, () -> userService.getUserAvatar());
-        verify(imageService).getUserAvatar();
-    }
 
     /**
      * Тест обработки исключений от UserRepository при сохранении.

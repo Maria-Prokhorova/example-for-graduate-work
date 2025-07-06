@@ -3,6 +3,7 @@ package ru.skypro.homework.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -78,12 +79,12 @@ public class GlobalExceptionHandler {
      * Обработка исключения, когда пароль неверный.
      *
      * @param e исключение
-     * @return ResponseEntity с статусом 400
+     * @return ResponseEntity с статусом 401
      */
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<String> handleInvalidPasswordException(InvalidPasswordException e) {
         log.error("Неверный пароль: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
     /**
@@ -99,6 +100,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Обработка исключения аутентификации.
+     *
+     * @param e исключение
+     * @return ResponseEntity с статусом 401
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
+        log.error("Ошибка аутентификации: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
+    /**
      * Обработка общих исключений.
      *
      * @param e исключение
@@ -110,4 +123,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Произошла внутренняя ошибка сервера");
     }
-} 
+}

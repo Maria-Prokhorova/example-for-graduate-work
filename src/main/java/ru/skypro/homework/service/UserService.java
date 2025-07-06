@@ -11,9 +11,8 @@ public interface UserService {
      * Обновляет пароль пользователя.
      *
      * @param newPassword - данные для обновления пароля
-     * @return результат операции
      */
-    boolean updatePassword(NewPassword newPassword);
+    void updatePassword(NewPassword newPassword);
 
     /**
      * Получает информацию о текущем пользователе.
@@ -37,10 +36,5 @@ public interface UserService {
      */
     void updateAvatarUser(MultipartFile image);
 
-    /**
-     * Получает аватар пользователя.
-     *
-     * @return изображение аватара
-     */
-    byte[] getUserAvatar();
+
 }
