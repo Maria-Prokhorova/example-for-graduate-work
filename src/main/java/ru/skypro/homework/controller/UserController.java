@@ -14,6 +14,8 @@ import ru.skypro.homework.dto.register.UpdateUser;
 import ru.skypro.homework.dto.user.User;
 import ru.skypro.homework.service.UserService;
 
+import javax.validation.Valid;
+
 @Tag(name = "Пользователи", description = "Раздел содержит методы по работе личной информацией пользователя")
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -39,7 +41,7 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
     })
     @PostMapping("/set_password")
-    public void updatePassword(@RequestBody NewPassword newPassword) {
+    public void updatePassword(@Valid @RequestBody NewPassword newPassword) {
         userService.updatePassword(newPassword);
     }
 
@@ -70,7 +72,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
     })
     @PatchMapping("/me")
-    public UpdateUser updateInfoAboutUser(@RequestBody UpdateUser newInfoUser) {
+    public UpdateUser updateInfoAboutUser(@Valid @RequestBody UpdateUser newInfoUser) {
         return userService.updateInfoAboutUser(newInfoUser);
     }
 
