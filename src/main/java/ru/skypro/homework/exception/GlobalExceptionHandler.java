@@ -4,8 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.stream.Collectors;
 
 /**
  * Глобальный обработчик исключений.
@@ -109,6 +116,48 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Void> handleAuthenticationException(AuthenticationException e) {
         log.error("Ошибка аутентификации: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    /**
+     * Обработка исключений валидации для @Valid.
+     *
+     * @param e исключение
+     * @return ResponseEntity с статусом 400
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException e) {
+        String errorMessage = e.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.joining(", "));
+        log.error("Ошибка валидации: {}", errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+    }
+
+    /**
+     * Обработка исключений валидации для @Validated.
+     *
+     * @param e исключение
+     * @return ResponseEntity с статусом 400
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        String errorMessage = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining(", "));
+        log.error("Ошибка валидации: {}", errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+    }
+
+    /**
+     * Обработка исключения неподдерживаемого HTTP метода.
+     *
+     * @param e исключение
+     * @return ResponseEntity с статусом 400
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<String> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        log.error("Неподдерживаемый HTTP метод: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Неподдерживаемый HTTP метод: " + e.getMessage());
     }
 
     /**

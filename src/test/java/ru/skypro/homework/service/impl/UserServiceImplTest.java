@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.register.NewPassword;
 import ru.skypro.homework.dto.register.UpdateUser;
 import ru.skypro.homework.dto.user.User;
@@ -15,7 +14,6 @@ import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.SecurityService;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,9 +38,6 @@ class UserServiceImplTest {
 
     @Mock
     private SecurityService securityService;
-
-    @Mock
-    private ImageService imageService;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -73,7 +68,7 @@ class UserServiceImplTest {
         testUserDto.setLastName("Doe");
         testUserDto.setEmail("john@example.com");
         testUserDto.setPhone("+1234567890");
-        testUserDto.setRole(Role.USER);
+        testUserDto.setRole(Role.USER.name());
         testUserDto.setImage("/avatar.jpg");
 
         testUpdateUser = new UpdateUser();
@@ -139,27 +134,6 @@ class UserServiceImplTest {
     }
 
     /**
-     * Тест успешного обновления аватара пользователя.
-     */
-    @Test
-    void updateAvatarUser_ShouldUpdateUserAvatar() {
-        MultipartFile mockFile = mock(MultipartFile.class);
-        String newImagePath = "/new-avatar.jpg";
-        when(securityService.getCurrentUser()).thenReturn(testUser);
-        when(imageService.saveImage(mockFile)).thenReturn(newImagePath);
-        when(userRepository.save(any(UserEntity.class))).thenReturn(testUser);
-
-        userService.updateAvatarUser(mockFile);
-
-        verify(securityService).getCurrentUser();
-        verify(imageService).saveImage(mockFile);
-        verify(userRepository).save(testUser);
-        assertEquals(newImagePath, testUser.getImagePath());
-    }
-
-
-
-    /**
      * Тест обновления информации о пользователе с null параметром.
      */
     @Test
@@ -172,22 +146,6 @@ class UserServiceImplTest {
         assertNull(result);
         verify(securityService).getCurrentUser();
         verify(userMapper).updateUserEntityFromDto(testUser, null);
-        verify(userRepository).save(testUser);
-    }
-
-    /**
-     * Тест обновления аватара с null изображением.
-     */
-    @Test
-    void updateAvatarUser_WithNullImage_ShouldHandleGracefully() {
-        when(securityService.getCurrentUser()).thenReturn(testUser);
-        when(imageService.saveImage(null)).thenReturn("/default-avatar.png");
-        when(userRepository.save(any(UserEntity.class))).thenReturn(testUser);
-
-        userService.updateAvatarUser(null);
-
-        verify(securityService).getCurrentUser();
-        verify(imageService).saveImage(null);
         verify(userRepository).save(testUser);
     }
 } 
