@@ -90,15 +90,14 @@ class UserServiceImplTest {
      * Тест успешного обновления пароля пользователя.
      */
     @Test
-    void updatePassword_WithValidPassword_ShouldReturnTrue() {
+    void updatePassword_WithValidPassword_ShouldUpdatePassword() {
         when(securityService.getCurrentUser()).thenReturn(testUser);
         when(passwordEncoder.matches("oldPassword", "encodedPassword")).thenReturn(true);
         when(passwordEncoder.encode("newPassword")).thenReturn("newEncodedPassword");
         when(userRepository.save(any(UserEntity.class))).thenReturn(testUser);
 
-        boolean result = userService.updatePassword(testNewPassword);
+        userService.updatePassword(testNewPassword);
 
-        assertTrue(result);
         verify(securityService).getCurrentUser();
         verify(passwordEncoder).matches("oldPassword", "encodedPassword");
         verify(passwordEncoder).encode("newPassword");
@@ -158,20 +157,7 @@ class UserServiceImplTest {
         assertEquals(newImagePath, testUser.getImagePath());
     }
 
-    /**
-     * Тест получения аватара пользователя.
-     */
-    @Test
-    void getUserAvatar_ShouldReturnUserAvatar() {
-        byte[] expectedAvatar = "test avatar bytes".getBytes();
-        when(imageService.getUserAvatar()).thenReturn(expectedAvatar);
 
-        byte[] result = userService.getUserAvatar();
-
-        assertNotNull(result);
-        assertArrayEquals(expectedAvatar, result);
-        verify(imageService).getUserAvatar();
-    }
 
     /**
      * Тест обновления информации о пользователе с null параметром.
