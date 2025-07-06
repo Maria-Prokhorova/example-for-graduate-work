@@ -228,7 +228,7 @@ public class AdServiceImplTest {
     }
 
     /**
-     * Тест на выброс исключения AccessDeniedException, в случае отсутствия прав на редактирование объявления
+     * Тест на получение объявлений авторизованного пользователя
      */
     @Test
     void shouldReturnResultOfGetAdsByUserWhenSuccess() {
@@ -248,5 +248,8 @@ public class AdServiceImplTest {
     @Test
     void shouldReturnResultOfOfGetAdsByUserWhenException() {
 
+        when(securityService.getCurrentUser()).thenThrow(new AccessDeniedException("Пользователь не найден"));
+
+        assertThrows(AccessDeniedException.class, () -> userService.updatePassword(testNewPassword));
     }
 }
