@@ -52,14 +52,14 @@ public class AdController {
      * Эндпойнт для добавления нового объявления.
      * Создать новое объявление может только авторизованный пользователь с ролью USER.
      *
-     * @param newAd - информация об объявлении.
+     * @param properties - информация об объявлении.
      * @param image - картинка объявления.
      * @return - ДТО "объявления".
      */
     @Operation(summary = "Добавление объявления")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Ad addAd(@RequestPart("newAd") CreateOrUpdateAd newAd, @RequestPart("image") MultipartFile image) {
-        return adService.addAd(newAd, image);
+    public Ad addAd(@RequestPart("properties") CreateOrUpdateAd properties, @RequestPart("image") MultipartFile image) {
+        return adService.addAd(properties, image);
     }
 
     /**
