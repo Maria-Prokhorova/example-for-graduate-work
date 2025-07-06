@@ -22,7 +22,6 @@ import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.SecurityService;
 
-import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -142,7 +141,7 @@ public class AdServiceImplTest {
      * Тест на получение информации об объявлении по его id
      */
     @Test
-    void shouldReturnResultOfGetAdWhenAdExist() {
+    void shouldReturnResultOfGetInfoAboutAdWhenAdExist() {
         when(adRepository.findById(1)).thenReturn(Optional.ofNullable(testAdEntity));
         when(adMapper.toExtendedAdDto(testAdEntity)).thenReturn(testExtendedAdDTO);
 
@@ -156,7 +155,7 @@ public class AdServiceImplTest {
      * Тест на выброс исключения AdNotFoundException, в случае отсутствия в БД id объявления
      */
     @Test
-    void shouldReturnResultOfGetAdWhenDoNotIdAdExist() {
+    void shouldReturnResultOfGetInfoAboutAdWhenDoNotIdAdExist() {
         when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
 
         assertThrows(AdNotFoundException.class, () -> adService.getInfoAboutAd(2));
@@ -176,11 +175,13 @@ public class AdServiceImplTest {
         when(adRepository.save(any(AdEntity.class))).thenReturn(testAdEntity);
         when(adMapper.toAdDto(testAdEntity)).thenReturn(testAdDTO);
 
-        // verify(securityService).getCurrentUser();
-        //  verify(imageService).saveImage(mockFile);
-        // verify(adRepository).save(any(AdEntity.class));
-
         assertEquals(testAdDTO, adService.addAd(testCreateOrUpdateAdDTO, mockFile));
+
+        verify(securityService).getCurrentUser();
+        verify(adMapper).toAdEntity(testCreateOrUpdateAdDTO, testUser);
+        verify(imageService).saveImage(mockFile);
+        verify(adRepository).save(any(AdEntity.class));
+        verify(adMapper).toAdDto(testAdEntity);
     }
 
     /**
@@ -189,27 +190,31 @@ public class AdServiceImplTest {
     @Test
     void shouldReturnResultOfUpdateInfoAboutAdWhenSuccess() {
         when(adRepository.findById(1)).thenReturn(Optional.ofNullable(testAdEntity));
+        when(adRepository.save(any(AdEntity.class))).thenReturn(testAdEntity);
+        when(adMapper.toAdDto(testAdEntity)).thenReturn(testAdDTO);
 
         securityService.checkPermissionToEditAd(testAdEntity);
         adMapper.updateAdEntityFromDto(testAdEntity, testCreateOrUpdateAdDTO);
-
-        when(adRepository.save(any(AdEntity.class))).thenReturn(testAdEntity);
-        when(adMapper.toAdDto(testAdEntity)).thenReturn(testAdDTO);
 
         verify(securityService).checkPermissionToEditAd(testAdEntity);
         verify(adMapper).updateAdEntityFromDto(testAdEntity, testCreateOrUpdateAdDTO);
 
         assertEquals(testAdDTO, adService.updateInfoAboutAd(1, testCreateOrUpdateAdDTO));
+
+        verify(adRepository).save(any(AdEntity.class));
+        verify(adMapper).toAdDto(testAdEntity);
     }
 
     /**
      * Тест на выброс исключения AdNotFoundException, в случае отсутствия в БД id объявления, которое нужно обновить
      */
     @Test
-    void shouldReturnResultOfUpdateAdWhenDoNotIdAdExist1() {
+    void shouldReturnResultOfUpdateAdWhenDoNotIdAdExist() {
         when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
 
         assertThrows(AdNotFoundException.class, () -> adService.updateInfoAboutAd(2, testCreateOrUpdateAdDTO));
+
+        verify(adRepository).findById(2);
     }
 
     /**
@@ -225,6 +230,8 @@ public class AdServiceImplTest {
 
         assertThrows(AccessDeniedException.class, () -> adService.updateInfoAboutAd(1, testCreateOrUpdateAdDTO));
 
+        verify(adRepository).findById(1);
+        verify(securityService).checkPermissionToEditAd(testAdEntity);
     }
 
     /**
@@ -246,10 +253,110 @@ public class AdServiceImplTest {
      * Тест на выброс исключения AccessDeniedException, в случае отсутствия прав на редактирование объявления
      */
     @Test
-    void shouldReturnResultOfOfGetAdsByUserWhenException() {
-
+    void shouldReturnResultOfGetAdsByUserWhenException() {
         when(securityService.getCurrentUser()).thenThrow(new AccessDeniedException("Пользователь не найден"));
 
-        assertThrows(AccessDeniedException.class, () -> userService.updatePassword(testNewPassword));
+        assertThrows(AccessDeniedException.class, () -> adService.getAdsByUser());
+
+        verify(securityService).getCurrentUser();
+    }
+
+    /**
+     * Тест успешного обновления картинки объявления.
+     */
+    @Test
+    void shouldReturnResultOfUpdateAvatarAdWhenSuccess() {
+        MultipartFile mockFile = mock(MultipartFile.class);
+        String newImagePath = "/new-avatar.jpg";
+
+        when(adRepository.findById(1)).thenReturn(Optional.ofNullable(testAdEntity));
+        securityService.checkPermissionToEditAd(testAdEntity);
+        when(imageService.saveImage(mockFile)).thenReturn(newImagePath);
+        when(adRepository.save(any(AdEntity.class))).thenReturn(testAdEntity);
+
+        adService.updateAvatarAd(1, mockFile);
+        assertEquals(newImagePath, testAdEntity.getImagePath());
+
+        verify(imageService).saveImage(mockFile);
+        verify(adRepository).save(testAdEntity);
+    }
+
+    /**
+     * Тест на выброс исключения AdNotFoundException, в случае отсутствия в БД id объявления,
+     * в которое нужно обновить картинку
+     */
+    @Test
+    void shouldReturnResultOfUpdateAvatarAdWhenDoNotId() {
+        MultipartFile mockFile = mock(MultipartFile.class);
+        when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
+
+        assertThrows(AdNotFoundException.class, () -> adService.updateAvatarAd(2, mockFile));
+
+        verify(adRepository).findById(2);
+    }
+
+    /**
+     * Тест на выброс исключения AccessDeniedException, в случае отсутствия прав на редактирование объявления
+     */
+    @Test
+    void shouldReturnResultOfUpdateAvatarAdWhenNoEditingRights() {
+        MultipartFile mockFile = mock(MultipartFile.class);
+        when(adRepository.findById(1)).thenReturn(Optional.ofNullable(testAdEntity));
+
+        doThrow(new AccessDeniedException("Нет прав на редактирование объявления"))
+                .when(securityService)
+                .checkPermissionToEditAd(testAdEntity);
+
+        assertThrows(AccessDeniedException.class, () -> adService.updateAvatarAd(1, mockFile));
+
+        verify(adRepository).findById(1);
+        verify(securityService).checkPermissionToEditAd(testAdEntity);
+    }
+
+    /**
+     * Тест на удаление объявления
+     */
+    @Test
+    void shouldReturnResultOfDeleteAdWhenSuccess() {
+        when(adRepository.findById(1)).thenReturn(Optional.ofNullable(testAdEntity));
+        when(securityService.isOwnerOfAd(testAdEntity)).thenReturn(true);
+
+        securityService.checkPermissionToDeleteAd(testAdEntity);
+        verify(securityService).checkPermissionToDeleteAd(testAdEntity);
+
+        adService.deleteAd(1);
+
+        verify(securityService).isOwnerOfAd(testAdEntity);
+        verify(adRepository).findById(1);
+        verify(adRepository).delete(testAdEntity);
+    }
+
+    /**
+     * Тест на выброс исключения AdNotFoundException, в случае отсутствия в БД id объявления, которое нужно обновить
+     */
+    @Test
+    void shouldReturnResultOfDeleteAdWhenDoNotIdAdExist() {
+        when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
+
+        assertThrows(AdNotFoundException.class, () -> adService.deleteAd(2));
+
+        verify(adRepository).findById(2);
+    }
+
+    /**
+     * Тест на выброс исключения AccessDeniedException, в случае отсутствия прав на редактирование объявления
+     */
+    @Test
+    void shouldReturnResultOfDeleteAdWhenNoEditingRights() {
+        when(adRepository.findById(1)).thenReturn(Optional.ofNullable(testAdEntity));
+
+        doThrow(new AccessDeniedException("Нет прав на удаление объявления"))
+                .when(securityService)
+                .checkPermissionToDeleteAd(testAdEntity);
+
+        assertThrows(AccessDeniedException.class, () -> adService.deleteAd(1));
+
+        verify(adRepository).findById(1);
+        verify(securityService).checkPermissionToDeleteAd(testAdEntity);
     }
 }
