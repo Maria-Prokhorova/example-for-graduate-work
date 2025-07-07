@@ -58,6 +58,23 @@ paths:
         '401':
           description: Unauthorized
   /users/me/image:
+    get:
+      tags:
+        - Пользователи
+      summary: 'Получение аватара авторизованного пользователя'
+      operationId: getUserImage
+      responses:
+        '200':
+          description: OK
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
     patch:
       tags:
         - Пользователи
@@ -112,6 +129,28 @@ paths:
           description: OK
         '401':
           description: Unauthorized
+  /images/{filename}:
+    get:
+      tags:
+        - Изображения
+      summary: 'Получение изображения по имени файла'
+      operationId: getImageByFilename
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Not found
   /ads:
     get:
       tags:
@@ -363,6 +402,28 @@ paths:
         '401':
           description: Unauthorized
   /ads/{id}/image:
+    get:
+      tags:
+        - Объявления
+      summary: 'Получение картинки объявления'
+      operationId: getAdImage
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Not found
     patch:
       tags:
         - Объявления
