@@ -7,7 +7,7 @@ CREATE TABLE users
     first_name  VARCHAR(16) NOT NULL,
     last_name   VARCHAR(16) NOT NULL,
     email       VARCHAR(32) NOT NULL,
-    password    VARCHAR(16) NOT NULL,
+    password    VARCHAR(128) NOT NULL,
     phone       VARCHAR(12) NOT NULL,
     role        VARCHAR,
     image       TEXT
