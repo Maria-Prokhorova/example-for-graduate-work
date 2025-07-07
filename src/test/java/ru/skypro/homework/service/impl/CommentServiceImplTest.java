@@ -21,6 +21,7 @@ import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.SecurityService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -94,7 +95,7 @@ public class CommentServiceImplTest {
         testCommentDTO.setAuthorImage(testCommentEntity.getAuthor().getImagePath());
         testCommentDTO.setPk(testCommentEntity.getId());
         testCommentDTO.setAuthorFirstName(testCommentEntity.getAuthor().getFirstName());
-        testCommentDTO.setCreatedAt(testCommentEntity.getCreatedAt());
+        testCommentDTO.setCreatedAt(testCommentEntity.getCreatedAt().toInstant(ZoneOffset.UTC).toEpochMilli());
 
         testCommentsDTO = new Comments();
         testCommentsDTO.setCount(1);
@@ -142,6 +143,9 @@ public class CommentServiceImplTest {
 
     @Test
     void shouldReturnResultOfAddCommentWhenCommentWasAdded() {
+        testCreateOrUpdateComment = new CreateOrUpdateComment();
+        testCreateOrUpdateComment.setText("text");
+        
         when(adRepository.findById(1))
                 .thenReturn(Optional.of(testAd));
         when(securityService.getCurrentUser())
@@ -152,7 +156,7 @@ public class CommentServiceImplTest {
                 .thenReturn(testCommentEntity);
         when(commentMapper.toCommentDto(testCommentEntity)).thenReturn(testCommentDTO);
 
-        assertEquals(testCommentDTO, commentService.addComment(1, "text"));
+        assertEquals(testCommentDTO, commentService.addComment(1, testCreateOrUpdateComment));
 
     }
 }

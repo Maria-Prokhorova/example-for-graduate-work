@@ -8,6 +8,7 @@ import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.UserEntity;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Component
 public class CommentMapper {
@@ -28,7 +29,7 @@ public class CommentMapper {
         comment.setAuthor(commentEntity.getAuthor().getId());
         comment.setAuthorFirstName(commentEntity.getAuthor().getFirstName());
         comment.setAuthorImage(commentEntity.getAuthor().getImagePath());
-        comment.setCreatedAt(commentEntity.getCreatedAt());
+        comment.setCreatedAt(commentEntity.getCreatedAt().toInstant(ZoneOffset.UTC).toEpochMilli());
         comment.setText(commentEntity.getText());
         return comment;
     }
