@@ -154,8 +154,7 @@ public class AdController {
             @ApiResponse(responseCode = "404", description = "Not found", content = @Content)
     })
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public byte[] updateAvatarAd(@PathVariable Integer id, @RequestParam MultipartFile image) {
-        String imagePath = adService.updateAvatarAd(id, image);
-        return imagePath.getBytes();
+    public void updateAvatarAd(@PathVariable Integer id, @RequestParam MultipartFile image) {
+        adService.updateAvatarAd(id, image);
     }
 }

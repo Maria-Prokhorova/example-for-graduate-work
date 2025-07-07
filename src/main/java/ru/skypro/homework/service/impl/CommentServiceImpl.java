@@ -47,8 +47,11 @@ public class CommentServiceImpl implements CommentService {
 
         Comments comments = new Comments();
         comments.setCount(commentRepository.getAmountCommentsByAdID(idAd));
+        
+        // Если комментариев нет, возвращаем пустой список
         if (comments.getCount() == 0) {
-            throw new CommentNotFoundException(idAd);
+            comments.setResults(new ArrayList<>());
+            return comments;
         }
 
         List<Comment> commentList = new ArrayList<>(comments.getCount());
@@ -91,9 +94,14 @@ public class CommentServiceImpl implements CommentService {
         adRepository
                 .findById(idAd)
                 .orElseThrow(() -> new AdNotFoundException(idAd));
-        commentRepository
+        
+        CommentEntity comment = commentRepository
                 .findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(commentId));
+        
+        // Проверяем права на удаление комментария
+        securityService.checkPermissionToDeleteComment(comment);
+        
         commentRepository.deleteById(commentId);
     }
 
@@ -110,9 +118,13 @@ public class CommentServiceImpl implements CommentService {
         adRepository
                 .findById(idAd)
                 .orElseThrow(() -> new AdNotFoundException(idAd));
+        
         CommentEntity commentEntity = commentRepository
                 .findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(commentId));
+
+        // Проверяем права на редактирование комментария
+        securityService.checkPermissionToEditComment(commentEntity);
 
         commentMapper.updateCommentEntityFromDto(commentEntity, updateComment);
         commentRepository.save(commentEntity);

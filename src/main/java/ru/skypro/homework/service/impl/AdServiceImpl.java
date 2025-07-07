@@ -103,13 +103,11 @@ public class AdServiceImpl implements AdService {
             throw new AdNotFoundException(adId);
         }
 
-        // Проверяем есть ли права на удаление объявления
+        // Проверяем права на удаление объявления
         securityService.checkPermissionToDeleteAd(ad.get());
 
-        // Проверяем является текущей пользователь автором объявления или админом
-        if (securityService.isOwnerOfAd(ad.orElse(null))) {
-            adRepository.delete(ad.orElse(null));
-        }
+        // Удаляем объявление
+        adRepository.delete(ad.get());
     }
 
     /**
@@ -128,12 +126,12 @@ public class AdServiceImpl implements AdService {
         }
 
         // Проверяем права на редактирование объявления
-        securityService.checkPermissionToEditAd(ad.orElse(null));
+        securityService.checkPermissionToEditAd(ad.get());
 
-        adMapper.updateAdEntityFromDto(ad.orElse(null), updateAd);
-        Optional<AdEntity> newAdAfterUpdate = adRepository.findById(adId);
-        adRepository.save(newAdAfterUpdate.orElse(null));
-        return adMapper.toAdDto(newAdAfterUpdate.orElse(null));
+        // Обновляем данные объявления
+        adMapper.updateAdEntityFromDto(ad.get(), updateAd);
+        adRepository.save(ad.get());
+        return adMapper.toAdDto(ad.get());
     }
 
     /**
@@ -168,10 +166,9 @@ public class AdServiceImpl implements AdService {
      *
      * @param adId  - id объявления.
      * @param image - новая картинка объявления.
-     * @return возвращаем обновленный путь к новой картинке.
      */
     @Override
-    public String updateAvatarAd(Integer adId, MultipartFile image) {
+    public void updateAvatarAd(Integer adId, MultipartFile image) {
         // Проверяем если ли объявление с таким номером в БД
         Optional<AdEntity> ad = adRepository.findById(adId);
         if (ad.isEmpty()) {
@@ -179,14 +176,13 @@ public class AdServiceImpl implements AdService {
         }
 
         // Проверяем права на редактирование объявления
-        securityService.checkPermissionToEditAd(ad.orElse(null));
+        securityService.checkPermissionToEditAd(ad.get());
 
         // Сохраняем изображение
         String imagePath = imageService.saveImage(image);
 
         // Обновляем путь к картинке
         ad.get().setImagePath(imagePath);
-        adRepository.save(ad.orElse(null));
-        return ad.get().getImagePath();
+        adRepository.save(ad.get());
     }
 }

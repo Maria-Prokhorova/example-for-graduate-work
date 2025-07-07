@@ -28,7 +28,8 @@ public class CommentMapper {
         comment.setPk(commentEntity.getId());
         comment.setAuthor(commentEntity.getAuthor().getId());
         comment.setAuthorFirstName(commentEntity.getAuthor().getFirstName());
-        comment.setAuthorImage(commentEntity.getAuthor().getImagePath());
+        comment.setAuthorImage(commentEntity.getAuthor().getImagePath() != null ? 
+                commentEntity.getAuthor().getImagePath() : "/users/me/image");
         comment.setCreatedAt(commentEntity.getCreatedAt().toInstant(ZoneOffset.UTC).toEpochMilli());
         comment.setText(commentEntity.getText());
         return comment;

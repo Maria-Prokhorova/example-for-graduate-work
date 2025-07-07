@@ -20,5 +20,5 @@ public interface AdService {
 
     Ads getAdsByUser();
 
-    String updateAvatarAd(Integer adId, MultipartFile image);
+    void updateAvatarAd(Integer adId, MultipartFile image);
 }
