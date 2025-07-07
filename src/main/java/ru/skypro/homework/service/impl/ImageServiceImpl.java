@@ -207,9 +207,25 @@ public class ImageServiceImpl implements ImageService {
 
     /**
      * Возвращает изображение по умолчанию.
+     * Создает простое 1x1 пиксельное изображение PNG.
      */
     private byte[] getDefaultImage() {
-        // Здесь можно вернуть реальное изображение по умолчанию
-        return new byte[0];
+        // Простое 1x1 пиксельное изображение PNG (прозрачное)
+        return new byte[] {
+            (byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47, // PNG signature
+            (byte) 0x0D, (byte) 0x0A, (byte) 0x1A, (byte) 0x0A,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0D, // IHDR chunk
+            (byte) 0x49, (byte) 0x48, (byte) 0x44, (byte) 0x52,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, // width: 1
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, // height: 1
+            (byte) 0x08, (byte) 0x06, (byte) 0x00, (byte) 0x00, // bit depth, color type, compression, filter, interlace
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0C, // IDAT chunk length
+            (byte) 0x49, (byte) 0x44, (byte) 0x41, (byte) 0x54,
+            (byte) 0x08, (byte) 0x99, (byte) 0x01, (byte) 0x01, // compressed data
+            (byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF,
+            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, // IEND chunk
+            (byte) 0x49, (byte) 0x45, (byte) 0x4E, (byte) 0x44,
+            (byte) 0xAE, (byte) 0x42, (byte) 0x60, (byte) 0x82
+        };
     }
 } 

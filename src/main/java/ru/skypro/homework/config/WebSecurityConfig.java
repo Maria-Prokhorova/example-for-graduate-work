@@ -13,12 +13,18 @@ import org.springframework.security.web.SecurityFilterChain;
 import ru.skypro.homework.entity.Role;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.http.HttpMethod;
 
 import javax.sql.DataSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
+@Slf4j
 public class WebSecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
@@ -28,7 +34,10 @@ public class WebSecurityConfig {
             "/webjars/**",
             "/login",
             "/register",
-            "/ads"
+            "/ads",
+            "/users/me/image",
+            "/ads/*/image",
+            "/images/**"
     };
 
     @Bean
@@ -39,6 +48,10 @@ public class WebSecurityConfig {
         jdbcUserDetailsManager.setUsersByUsernameQuery("SELECT email, password, enabled FROM users WHERE email = ?");
         jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("SELECT email, role FROM users WHERE email = ?");
 
+        log.debug("JdbcUserDetailsManager configured with queries:");
+        log.debug("User exists: SELECT email FROM users WHERE email = ?");
+        log.debug("Users by username: SELECT email, password, enabled FROM users WHERE email = ?");
+        log.debug("Authorities by username: SELECT email, role FROM users WHERE email = ?");
 
         return jdbcUserDetailsManager;
     }
@@ -52,9 +65,14 @@ public class WebSecurityConfig {
                                 authorization
                                         .mvcMatchers(AUTH_WHITELIST)
                                         .permitAll()
+                                        .mvcMatchers(HttpMethod.GET, "/ads", "/ads/**")
+                                        .permitAll()
                                         .mvcMatchers("/ads/**", "/users/**")
                                         .authenticated())
                 .cors()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
                 .httpBasic(withDefaults());
         return http.build();
@@ -77,6 +95,11 @@ public class WebSecurityConfig {
                     .allowCredentials(true);
             }
         };
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
 }
