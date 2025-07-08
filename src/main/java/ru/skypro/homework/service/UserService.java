@@ -37,4 +37,14 @@ public interface UserService {
     void updateAvatarUser(MultipartFile image);
 
 
+    /**
+     * Удаляет аватар пользователя.
+     */
+    void deleteAvatarUser();
+
+    /**
+     * Возвращает аватар пользователя.
+     */
+    byte[] getAvatarUser();
+
 }

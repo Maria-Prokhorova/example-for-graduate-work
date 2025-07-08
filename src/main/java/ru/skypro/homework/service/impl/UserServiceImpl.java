@@ -130,5 +130,27 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userEntity);
     }
 
+    /**
+     * Удаляет аватар текущего пользователя.
+     *
+     * @throws UserNotFoundException если текущий пользователь не найден в базе данных
+     */
+    @Override
+    public void deleteAvatarUser() {
+        UserEntity userEntity = securityService.getCurrentUser();
+
+        if (userEntity.getImagePath() != null) {
+            imageService.deleteImage(userEntity.getImagePath());
+
+            // Обновляем путь к аватару
+            userEntity.setImagePath(null);
+            userRepository.save(userEntity);
+        }
+    }
+
+    @Override
+    public byte[] getAvatarUser() {
+        return imageService.getUserAvatar();
+    }
 
 }
