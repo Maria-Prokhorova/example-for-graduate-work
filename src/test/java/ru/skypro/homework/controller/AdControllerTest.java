@@ -1,5 +1,6 @@
 package ru.skypro.homework.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -7,9 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import ru.skypro.homework.config.WebSecurityConfig;
 import ru.skypro.homework.dto.ad.Ad;
 import ru.skypro.homework.dto.ad.Ads;
 import ru.skypro.homework.mapper.AdMapper;
@@ -25,22 +30,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdController.class)
+@Import(WebSecurityConfig.class)
+@WithMockUser(username = "test@example.com", roles = {"USER"})
 class AdControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private AdMapper adMapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
-    private AdRepository adRepository;
-
-    @SpyBean
     private AdServiceImpl adService;
 
-    @InjectMocks
-    private AdController adController;
+    @Autowired
+    private LocalValidatorFactoryBean validator;
 
     @Test
     @DisplayName("GET /ads — Получение всех объявлений")
