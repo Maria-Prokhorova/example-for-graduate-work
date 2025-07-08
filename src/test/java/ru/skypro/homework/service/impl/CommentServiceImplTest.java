@@ -152,7 +152,7 @@ public class CommentServiceImplTest {
                 .thenReturn(testCommentEntity);
         when(commentMapper.toCommentDto(testCommentEntity)).thenReturn(testCommentDTO);
 
-        assertEquals(testCommentDTO, commentService.addComment(1, "text"));
+        assertEquals(testCommentDTO, commentService.addComment(1, testCreateOrUpdateComment));
 
     }
 }
