@@ -23,8 +23,7 @@ import ru.skypro.homework.service.impl.AdServiceImpl;
 
 import java.util.List;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -81,6 +80,4 @@ class AdControllerTest {
 
         verify(adService).getAllAds();
     }
-
-
 }

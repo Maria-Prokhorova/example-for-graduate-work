@@ -148,13 +148,13 @@ public class AdController {
     @Operation(summary = "Обновление картинки объявлений")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
             @ApiResponse(responseCode = "404", description = "Not found", content = @Content)
     })
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public byte[] updateAvatarAd(@PathVariable Integer id, @RequestParam MultipartFile image) {
-        String imagePath = adService.updateAvatarAd(id, image);
-        return imagePath.getBytes();
+    public void updateAvatarAd(@PathVariable Integer id, @RequestParam MultipartFile image) {
+        adService.updateAvatarAd(id, image);
     }
 }

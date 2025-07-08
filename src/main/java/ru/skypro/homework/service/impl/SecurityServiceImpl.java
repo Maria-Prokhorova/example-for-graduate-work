@@ -10,6 +10,7 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.exception.AccessDeniedException;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.SecurityService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Реализация сервиса для проверки прав доступа пользователей.
@@ -23,6 +24,7 @@ import ru.skypro.homework.service.SecurityService;
  * - Администратор может делать все
  */
 @Service
+@Slf4j
 public class SecurityServiceImpl implements SecurityService {
 
     private final UserRepository userRepository;
@@ -40,13 +42,20 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public UserEntity getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.debug("Authentication: {}", authentication);
+        
         if (authentication == null || !authentication.isAuthenticated()) {
+            log.error("User not authenticated");
             throw new AccessDeniedException("Пользователь не аутентифицирован");
         }
 
+        log.debug("Looking for user with email: {}", authentication.getName());
         // Находим пользователя в базе данных по email
         return userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new AccessDeniedException("Пользователь не найден"));
+                .orElseThrow(() -> {
+                    log.error("User not found in database: {}", authentication.getName());
+                    return new AccessDeniedException("Пользователь не найден");
+                });
     }
 
     /**
