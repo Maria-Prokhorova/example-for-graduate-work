@@ -7,6 +7,7 @@ import ru.skypro.homework.dto.comment.CreateOrUpdateComment;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.exception.AccessDeniedException;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
@@ -91,10 +92,13 @@ public class CommentServiceImpl implements CommentService {
         adRepository
                 .findById(idAd)
                 .orElseThrow(() -> new AdNotFoundException(idAd));
-        commentRepository
+        CommentEntity commentEntity = commentRepository
                 .findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(commentId));
-        commentRepository.deleteById(commentId);
+
+        if (!securityService.isOwnerOfComment(commentEntity)) {
+            throw new AccessDeniedException();
+        } else commentRepository.deleteById(commentId);
     }
 
     /**
@@ -114,8 +118,12 @@ public class CommentServiceImpl implements CommentService {
                 .findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(commentId));
 
-        commentMapper.updateCommentEntityFromDto(commentEntity, updateComment);
-        commentRepository.save(commentEntity);
-        return commentMapper.toCommentDto(commentEntity);
+        if (!securityService.isOwnerOfComment(commentEntity)) {
+            throw new AccessDeniedException();
+        } else {
+            commentMapper.updateCommentEntityFromDto(commentEntity, updateComment);
+            commentRepository.save(commentEntity);
+            return commentMapper.toCommentDto(commentEntity);
+        }
     }
 }
