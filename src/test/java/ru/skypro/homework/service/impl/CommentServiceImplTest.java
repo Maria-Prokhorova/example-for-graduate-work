@@ -13,6 +13,7 @@ import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.exception.AccessDeniedException;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
@@ -49,8 +50,8 @@ public class CommentServiceImplTest {
     @InjectMocks
     CommentServiceImpl commentService;
 
-    UserEntity testUser;
-    AdEntity testAd;
+    UserEntity testUserEntity;
+    AdEntity testAdEntity;
     CommentEntity testCommentEntity;
     Comment testCommentDTO;
     Comments testCommentsDTO;
@@ -61,32 +62,32 @@ public class CommentServiceImplTest {
      */
     @BeforeEach
     void setUp() {
-        testUser = new UserEntity();
-        testUser.setId(1);
-        testUser.setFirstName("Antony");
-        testUser.setLastName("Mackey");
-        testUser.setEmail("anmac@example.com");
-        testUser.setPassword("password");
-        testUser.setPhoneNumber("+9876543210");
-        testUser.setRole(Role.USER);
-        testUser.setImagePath("/avatar.jpg");
+        testUserEntity = new UserEntity();
+        testUserEntity.setId(1);
+        testUserEntity.setFirstName("Antony");
+        testUserEntity.setLastName("Mackey");
+        testUserEntity.setEmail("anmac@example.com");
+        testUserEntity.setPassword("password");
+        testUserEntity.setPhoneNumber("+9876543210");
+        testUserEntity.setRole(Role.USER);
+        testUserEntity.setImagePath("/avatar.jpg");
 
-        testAd = new AdEntity();
-        testAd.setId(1);
-        testAd.setAuthor(testUser);
-        testAd.setTitle("Test Ad");
-        testAd.setDescription("Test Ad Description");
-        testAd.setImagePath("/avatar.jpg");
-        testAd.setPrice(10000);
+        testAdEntity = new AdEntity();
+        testAdEntity.setId(1);
+        testAdEntity.setAuthor(testUserEntity);
+        testAdEntity.setTitle("Test Ad");
+        testAdEntity.setDescription("Test Ad Description");
+        testAdEntity.setImagePath("/avatar.jpg");
+        testAdEntity.setPrice(10000);
 
         testCommentEntity = new CommentEntity();
         testCommentEntity.setId(1);
         testCommentEntity.setText("text");
-        testCommentEntity.setAuthor(testUser);
+        testCommentEntity.setAuthor(testUserEntity);
         testCommentEntity.setCreatedAt(LocalDateTime.now());
-        testCommentEntity.setAd(testAd);
+        testCommentEntity.setAd(testAdEntity);
 
-        testAd.setCommentsInAd(Set.of(testCommentEntity));
+        testAdEntity.setCommentsInAd(Set.of(testCommentEntity));
 
         testCommentDTO = new Comment();
         testCommentDTO.setAuthor(testCommentEntity.getAuthor().getId());
@@ -143,16 +144,138 @@ public class CommentServiceImplTest {
     @Test
     void shouldReturnResultOfAddCommentWhenCommentWasAdded() {
         when(adRepository.findById(1))
-                .thenReturn(Optional.of(testAd));
+                .thenReturn(Optional.of(testAdEntity));
         when(securityService.getCurrentUser())
-                .thenReturn(testUser);
-        when(commentMapper.toCommentEntity(testCreateOrUpdateComment, testUser, testAd))
+                .thenReturn(testUserEntity);
+        when(commentMapper.toCommentEntity(
+                testCreateOrUpdateComment,
+                testUserEntity,
+                testAdEntity))
                 .thenReturn(testCommentEntity);
         when(commentRepository.save(any(CommentEntity.class)))
                 .thenReturn(testCommentEntity);
-        when(commentMapper.toCommentDto(testCommentEntity)).thenReturn(testCommentDTO);
+        when(commentMapper.toCommentDto(any(CommentEntity.class))).thenReturn(testCommentDTO);
 
         assertEquals(testCommentDTO, commentService.addComment(1, testCreateOrUpdateComment));
+        verify(securityService).getCurrentUser();
+    }
 
+    @Test
+    void shouldReturnResultOfAddCommentWhenAdNotFound() {
+        when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
+
+        assertThrows(AdNotFoundException.class, () -> adRepository.findById(2));
+    }
+
+    @Test
+    void shouldReturnResultOfDeleteCommentWhenCommentWasDeleted() {
+        when(adRepository.findById(1))
+                .thenReturn(Optional.of(testAdEntity));
+        when(commentRepository.findById(1))
+                .thenReturn(Optional.of(testCommentEntity));
+        when(securityService.isOwnerOfComment(any(CommentEntity.class)))
+                .thenReturn(true);
+
+        commentService.deleteComment(1, 1);
+
+        verify(commentRepository).deleteById(testCommentEntity.getId());
+    }
+
+    @Test
+    void shouldReturnResultOfDeleteCommentWhenAdNotFound() {
+        when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
+
+        assertThrows(
+                AdNotFoundException.class,
+                () -> commentService.deleteComment(2, 1));
+    }
+
+    @Test
+    void shouldReturnResultOfDeleteCommentWhenCommentNotFound() {
+        when(adRepository.findById(1)).thenReturn(Optional.of(testAdEntity));
+        when(commentRepository.findById(2)).thenThrow(CommentNotFoundException.class);
+
+        assertThrows(
+                CommentNotFoundException.class,
+                () -> commentService.deleteComment(1, 2));
+    }
+
+    @Test
+    void shouldReturnResultOfDeleteCommentWhenNoPermissionToDeleteComment() {
+        when(adRepository.findById(1))
+                .thenReturn(Optional.of(testAdEntity));
+        when(commentRepository.findById(1))
+                .thenReturn(Optional.of(testCommentEntity));
+        when(securityService.isOwnerOfComment(any(CommentEntity.class)))
+                .thenReturn(false);
+
+        assertThrows(
+                AccessDeniedException.class,
+                () -> commentService.deleteComment(1, 1));
+    }
+
+    @Test
+    void shouldReturnResultOfUpdateCommentWhenCommentWasUpdated() {
+        when(adRepository.findById(1))
+                .thenReturn(Optional.of(testAdEntity));
+        when(commentRepository.findById(1))
+                .thenReturn(Optional.of(testCommentEntity));
+        when(securityService.isOwnerOfComment(any(CommentEntity.class)))
+                .thenReturn(true);
+        when(commentRepository.save(any(CommentEntity.class)))
+                .thenReturn(testCommentEntity);
+        when(commentMapper.toCommentDto(testCommentEntity))
+                .thenReturn(testCommentDTO);
+
+        Comment result = commentService.updateComment(
+                1,
+                1,
+                testCreateOrUpdateComment);
+        assertEquals(testCommentDTO, result);
+    }
+
+    @Test
+    void shouldReturnResultOfUpdateCommentWhenAdNotFound() {
+        when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
+
+        assertThrows(
+                AdNotFoundException.class,
+                () -> commentService.updateComment(
+                        2,
+                        1,
+                        testCreateOrUpdateComment
+                ));
+    }
+
+    @Test
+    void shouldReturnResultOfUpdateCommentWhenCommentNotFound() {
+        when(adRepository.findById(1))
+                .thenReturn(Optional.of(testAdEntity));
+        when(commentRepository.findById(2))
+                .thenThrow(CommentNotFoundException.class);
+
+        assertThrows(
+                CommentNotFoundException.class,
+                () -> commentService.updateComment(
+                        1,
+                        2,
+                        testCreateOrUpdateComment));
+    }
+
+    @Test
+    void shouldReturnResultOfUpdateCommentWhenNoPermissionToUpdateComment() {
+        when(adRepository.findById(1))
+                .thenReturn(Optional.of(testAdEntity));
+        when(commentRepository.findById(1))
+                .thenReturn(Optional.of(testCommentEntity));
+        when(securityService.isOwnerOfComment(any(CommentEntity.class)))
+                .thenReturn(false);
+
+        assertThrows(
+                AccessDeniedException.class,
+                () -> commentService.updateComment(
+                        1,
+                        1,
+                        testCreateOrUpdateComment));
     }
 }
