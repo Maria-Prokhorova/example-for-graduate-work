@@ -8,8 +8,7 @@ JDK 11,
 Project Maven,  
 Spring Boot 3.4.5,  
 встраиваемая база данных H2 (файл transaction.mv.db),
-база данных PostgreSQL,  
-телеграмбот
+база данных PostgreSQL
 
 ### 2. Шаги развертывания.
 #### *Установка зависимостей:*
