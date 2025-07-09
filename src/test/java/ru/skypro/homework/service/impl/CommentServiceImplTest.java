@@ -141,6 +141,9 @@ public class CommentServiceImplTest {
         assertThrows(CommentNotFoundException.class, () -> commentService.getComments(2));
     }
 
+    /**
+     * Тест успешного добавления комментария к объявлению
+     */
     @Test
     void shouldReturnResultOfAddCommentWhenCommentWasAdded() {
         when(adRepository.findById(1))
@@ -160,6 +163,9 @@ public class CommentServiceImplTest {
         verify(securityService).getCurrentUser();
     }
 
+    /**
+     * Тест на выброс искючения - AdNotFoundException
+     */
     @Test
     void shouldReturnResultOfAddCommentWhenAdNotFound() {
         when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
@@ -167,6 +173,9 @@ public class CommentServiceImplTest {
         assertThrows(AdNotFoundException.class, () -> adRepository.findById(2));
     }
 
+    /**
+     * Тест успешного удаления комментария к объявлению
+     */
     @Test
     void shouldReturnResultOfDeleteCommentWhenCommentWasDeleted() {
         when(adRepository.findById(1))
@@ -181,6 +190,9 @@ public class CommentServiceImplTest {
         verify(commentRepository).deleteById(testCommentEntity.getId());
     }
 
+    /**
+     * тест на выброс исключения - AdNotFoundException
+     */
     @Test
     void shouldReturnResultOfDeleteCommentWhenAdNotFound() {
         when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
@@ -190,6 +202,9 @@ public class CommentServiceImplTest {
                 () -> commentService.deleteComment(2, 1));
     }
 
+    /**
+     * тест на выброс исключения - CommentNotFoundException
+     */
     @Test
     void shouldReturnResultOfDeleteCommentWhenCommentNotFound() {
         when(adRepository.findById(1)).thenReturn(Optional.of(testAdEntity));
@@ -200,6 +215,10 @@ public class CommentServiceImplTest {
                 () -> commentService.deleteComment(1, 2));
     }
 
+    /**
+     * тест на выброс исключения при отсутсвии прав на удаление -
+     * - AccessDeniedException
+     */
     @Test
     void shouldReturnResultOfDeleteCommentWhenNoPermissionToDeleteComment() {
         when(adRepository.findById(1))
@@ -214,6 +233,9 @@ public class CommentServiceImplTest {
                 () -> commentService.deleteComment(1, 1));
     }
 
+    /**
+     * тест успешного изменения комментария к объявлению
+     */
     @Test
     void shouldReturnResultOfUpdateCommentWhenCommentWasUpdated() {
         when(adRepository.findById(1))
@@ -234,6 +256,9 @@ public class CommentServiceImplTest {
         assertEquals(testCommentDTO, result);
     }
 
+    /**
+     * тест на выброс исключения - AdNotFoundException
+     */
     @Test
     void shouldReturnResultOfUpdateCommentWhenAdNotFound() {
         when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
@@ -247,6 +272,9 @@ public class CommentServiceImplTest {
                 ));
     }
 
+    /**
+     * тест на выброс исключения - CommentNotFoundException
+     */
     @Test
     void shouldReturnResultOfUpdateCommentWhenCommentNotFound() {
         when(adRepository.findById(1))
@@ -262,6 +290,10 @@ public class CommentServiceImplTest {
                         testCreateOrUpdateComment));
     }
 
+    /**
+     * тест на выброс исключения при отсутсвии прав на изменение -
+     * - AccessDeniedException
+     */
     @Test
     void shouldReturnResultOfUpdateCommentWhenNoPermissionToUpdateComment() {
         when(adRepository.findById(1))
