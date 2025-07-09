@@ -161,8 +161,8 @@ public class AdServiceImpl implements AdService {
 
     /**
      * Обновление картинки объявления.
-     * Сначала находим в БД объявление по его id. Затем сохраняем изображение.
-     * Обновляем путь к картинке у найденного объявления.
+     * Сначала находим в БД объявление по его id. Затем обновляем изображение,
+     * удаляя старое и сохраняя новое.
      *
      * @param adId  - id объявления.
      * @param image - новая картинка объявления.
@@ -178,11 +178,12 @@ public class AdServiceImpl implements AdService {
         // Проверяем права на редактирование объявления
         securityService.checkPermissionToEditAd(ad.get());
 
-        // Сохраняем изображение
-        String imagePath = imageService.saveImage(image);
+        // Обновляем изображение, удаляя старое и сохраняя новое
+        String oldImagePath = ad.get().getImagePath();
+        String newImagePath = imageService.updateImage(oldImagePath, image);
 
         // Обновляем путь к картинке
-        ad.get().setImagePath(imagePath);
+        ad.get().setImagePath(newImagePath);
         adRepository.save(ad.get());
     }
 }

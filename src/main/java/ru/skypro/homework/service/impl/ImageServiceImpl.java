@@ -115,8 +115,11 @@ public class ImageServiceImpl implements ImageService {
     public byte[] getAdImage(Integer adId) {
         AdEntity ad = adRepository.findById(adId)
                 .orElseThrow(() -> new AdNotFoundException("Объявление не найдено: " + adId));
-
-        return getImage(ad.getImagePath());
+        String imagePath = ad.getImagePath();
+        if (imagePath == null || imagePath.isEmpty()) {
+            throw new ImageNotFoundException("У объявления нет изображения");
+        }
+        return getImage(imagePath);
     }
 
     /**
@@ -131,8 +134,11 @@ public class ImageServiceImpl implements ImageService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден: " + username));
-
-        return getImage(user.getImagePath());
+        String imagePath = user.getImagePath();
+        if (imagePath == null || imagePath.isEmpty()) {
+            throw new ImageNotFoundException("У пользователя нет аватара");
+        }
+        return getImage(imagePath);
     }
 
     /**

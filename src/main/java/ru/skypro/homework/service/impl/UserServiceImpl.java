@@ -113,7 +113,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Обновляет аватар текущего пользователя.
-     * Метод сохраняет новое изображение аватара для текущего пользователя.
+     * Метод обновляет изображение аватара для текущего пользователя,
+     * удаляя старое изображение и сохраняя новое.
      *
      * @param image - файл изображения аватара
      * @throws UserNotFoundException если текущий пользователь не найден в базе данных
@@ -122,11 +123,12 @@ public class UserServiceImpl implements UserService {
     public void updateAvatarUser(MultipartFile image) {
         UserEntity userEntity = securityService.getCurrentUser();
 
-        // Сохраняем изображение
-        String imagePath = imageService.saveImage(image);
+        // Обновляем изображение, удаляя старое и сохраняя новое
+        String oldImagePath = userEntity.getImagePath();
+        String newImagePath = imageService.updateImage(oldImagePath, image);
 
         // Обновляем путь к аватару
-        userEntity.setImagePath(imagePath);
+        userEntity.setImagePath(newImagePath);
         userRepository.save(userEntity);
     }
 
