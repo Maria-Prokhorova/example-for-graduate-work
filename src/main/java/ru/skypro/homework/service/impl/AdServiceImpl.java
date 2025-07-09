@@ -107,8 +107,8 @@ public class AdServiceImpl implements AdService {
         securityService.checkPermissionToDeleteAd(ad.get());
 
         // Проверяем является текущей пользователь автором объявления или админом
-        if (securityService.isOwnerOfAd(ad.orElse(null))) {
-            adRepository.delete(ad.orElse(null));
+        if (securityService.isOwnerOfAd(ad.get())) {
+            adRepository.delete(ad.get());
         }
     }
 
@@ -128,18 +128,16 @@ public class AdServiceImpl implements AdService {
         }
 
         // Проверяем права на редактирование объявления
-        securityService.checkPermissionToEditAd(ad.orElse(null));
+        securityService.checkPermissionToEditAd(ad.get());
 
-        adMapper.updateAdEntityFromDto(ad.orElse(null), updateAd);
-        Optional<AdEntity> newAdAfterUpdate = adRepository.findById(adId);
-        adRepository.save(newAdAfterUpdate.orElse(null));
-        return adMapper.toAdDto(newAdAfterUpdate.orElse(null));
+        adMapper.updateAdEntityFromDto(ad.get(), updateAd);
+        return adMapper.toAdDto(ad.get());
     }
 
     /**
      * Получение объявлений авторизованного пользователя.
      *
-     * @return
+     * @return ДТО Ads
      */
     @Override
     public Ads getAdsByUser() {
@@ -179,7 +177,7 @@ public class AdServiceImpl implements AdService {
         }
 
         // Проверяем права на редактирование объявления
-        securityService.checkPermissionToEditAd(ad.orElse(null));
+        securityService.checkPermissionToEditAd(ad.get());
 
         // Сохраняем изображение
         String imagePath = imageService.saveImage(image);
