@@ -172,7 +172,7 @@ class AdControllerTest {
     }
 
     @Test
-    @DisplayName("POST /ads — Добавление нового объявления")
+    @DisplayName("GET /ads{id} — Получение информации об объявлении")
     public void shouldReturnResultOfGetAdByIdWhenSuccess() throws Exception {
         when(adService.getInfoAboutAd(1)).thenReturn(testExtendedAdDTO);
 
@@ -327,5 +327,31 @@ class AdControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    @DisplayName("PATCH /ads/{id}/image — Обновление картинки объявления")
+    public void shouldReturnResultOfUpdateAvatarAdWhenSuccess() throws Exception {
+        // Настраиваем мок, чтобы он возвращал "image" при вызове метода updateAvatarAd
+        when(adService.updateAvatarAd(any(Integer.class), any(MultipartFile.class))).thenReturn("image");
+
+        // Создаем мок файл для загрузки
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "image",
+                "test.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "Test image content".getBytes()
+        );
+
+        // Отправляем PATCH запрос на эндпоинт и проверяем ответ
+        mockMvc.perform(MockMvcRequestBuilders
+                        .multipart("/ads/{id}/image", 1)
+                        .file(mockFile)
+                        .with(request -> {
+                            request.setMethod("PATCH");  // Устанавливаем метод PATCH
+                            return request;
+                        })
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isOk())
+                .andExpect(content().string("image")); // Ожидаемое содержимое
+    }
 
 }
