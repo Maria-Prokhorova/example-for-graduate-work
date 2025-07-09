@@ -90,14 +90,8 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
     })
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateAvatarUser(@RequestParam("image") MultipartFile image) {
-        if ("image/jpeg".equals(image.getContentType())) {
-            userService.updateAvatarUser(image);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } else {
-            log.warn("Unsupported file format: {}", image.getContentType());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public void updateAvatarUser(@RequestParam("image") MultipartFile image) {
+        userService.updateAvatarUser(image);
     }
 
     /**
@@ -111,18 +105,5 @@ public class UserController {
     @DeleteMapping("/me/image")
     public void deleteAvatarUser() {
         userService.deleteAvatarUser();
-    }
-
-    /**
-     * Возвращает аватар текущего пользователя.
-     */
-    @Operation(summary = "Получение аватара")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
-    })
-    @GetMapping(value = "/me/image", produces = "image/jpeg")
-    public byte[] getAvatarUser() {
-        return userService.getAvatarUser();
     }
 }
