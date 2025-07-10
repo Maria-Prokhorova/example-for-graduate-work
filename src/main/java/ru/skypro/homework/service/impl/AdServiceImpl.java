@@ -131,6 +131,7 @@ public class AdServiceImpl implements AdService {
         securityService.checkPermissionToEditAd(ad.get());
 
         adMapper.updateAdEntityFromDto(ad.get(), updateAd);
+        adRepository.save(ad.get());
         return adMapper.toAdDto(ad.get());
     }
 
