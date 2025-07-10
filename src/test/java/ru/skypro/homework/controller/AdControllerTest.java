@@ -21,17 +21,11 @@ import ru.skypro.homework.dto.ad.Ad;
 import ru.skypro.homework.dto.ad.Ads;
 import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ad.ExtendedAd;
-import ru.skypro.homework.entity.AdEntity;
-import ru.skypro.homework.entity.CommentEntity;
-import ru.skypro.homework.entity.Role;
-import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.exception.AccessDeniedException;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.service.impl.AdServiceImpl;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -57,11 +51,8 @@ class AdControllerTest {
 
     private Ad testAdDTO;
     private Ads testAdsDTO;
-    private AdEntity testAdEntity;
     private CreateOrUpdateAd testCreateOrUpdateAdDTO;
     private ExtendedAd testExtendedAdDTO;
-    private UserEntity testUser;
-    private CommentEntity testCommentEntity;
 
     /**
      * Подготовка тестовых данных перед каждым тестом.
@@ -90,33 +81,6 @@ class AdControllerTest {
         testExtendedAdDTO.setPhone("+71112043601");
         testExtendedAdDTO.setPrice(1000);
         testExtendedAdDTO.setTitle("ad 1");
-
-        testUser = new UserEntity();
-        testUser.setId(1);
-        testUser.setFirstName("Antony");
-        testUser.setLastName("Mackey");
-        testUser.setEmail("anmac@example.com");
-        testUser.setPassword("password");
-        testUser.setPhoneNumber("+98021010011");
-        testUser.setRole(Role.USER);
-        testUser.setImagePath("/avatar.jpg");
-
-        testAdEntity = new AdEntity();
-        testAdEntity.setId(1);
-        testAdEntity.setAuthor(testUser);
-        testAdEntity.setTitle("Test Ad");
-        testAdEntity.setDescription("Test Ad Description");
-        testAdEntity.setImagePath("/avatar.jpg");
-        testAdEntity.setPrice(10000);
-
-        testCommentEntity = new CommentEntity();
-        testCommentEntity.setId(1);
-        testCommentEntity.setText("text");
-        testCommentEntity.setAuthor(testUser);
-        testCommentEntity.setCreatedAt(LocalDateTime.now());
-        testCommentEntity.setAd(testAdEntity);
-
-        testAdEntity.setCommentsInAd(Set.of(testCommentEntity));
 
         testAdsDTO = new Ads();
         testAdsDTO.setCount(1);
