@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 @Tag(name = "Изображения", description = "Раздел содержит методы по работе с изображениями")
 @Slf4j
 @RestController
-@RequestMapping("/images")
+//@RequestMapping("/images")
 public class ImageController {
 
     private final ImageService imageService;
@@ -37,8 +37,8 @@ public class ImageController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
-    @GetMapping(value = "/{imagePath}")
-    public ResponseEntity<byte[]> getAvatarUser(@PathVariable String imagePath, HttpServletResponse response) {
+    @GetMapping(value = "/images/{imagePath}")
+    public ResponseEntity<byte[]> getAvatar(@PathVariable String imagePath, HttpServletResponse response) {
         byte[] image = imageService.getImage(imagePath);
         if (image == null) {
             return ResponseEntity.notFound().build();
@@ -47,6 +47,22 @@ public class ImageController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(resolveImageType(imagePath));
         return new ResponseEntity<>(image, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Получение аватара пользователя
+     */
+    @GetMapping(value = "/users/me/image", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
+    public byte[] getAvatarUser() {
+        return imageService.getUserAvatar();
+    }
+
+    /**
+     * Получение картинки объявления
+     */
+    @GetMapping(value = "/ads/{id}/image", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
+    public byte[] getImageAd(@PathVariable Integer id) {
+        return imageService.getAdImage(id);
     }
 
     private MediaType resolveImageType(String imagePath) {
