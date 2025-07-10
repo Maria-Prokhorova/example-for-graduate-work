@@ -2,7 +2,6 @@ package ru.skypro.homework.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import ru.skypro.homework.dto.Role;
 
 /**
  * DTO для представления данных пользователя
@@ -25,8 +24,8 @@ public class User {
     @Schema(description = "телефон пользователя")
     private String phone;
 
-    @Schema(description = "роль пользователя")
-    private Role role;
+    @Schema(description = "роль пользователя", allowableValues = {"USER", "ADMIN"})
+    private String role;
 
     @Schema(description = "ссылка на аватар пользователя")
     private String image;
