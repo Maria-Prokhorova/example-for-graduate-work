@@ -37,6 +37,7 @@ public class CommentServiceImpl implements CommentService {
     /**
      * Получение всех комментариев
      * относящихся к определенному объявлению
+     *
      * @param idAd id объявления
      * @return DTO comments
      */
@@ -49,7 +50,8 @@ public class CommentServiceImpl implements CommentService {
         Comments comments = new Comments();
         comments.setCount(commentRepository.getAmountCommentsByAdID(idAd));
         if (comments.getCount() == 0) {
-            throw new CommentNotFoundException(idAd);
+            comments.setResults(new ArrayList<>());
+            return comments;
         }
 
         List<Comment> commentList = new ArrayList<>(comments.getCount());
@@ -62,7 +64,8 @@ public class CommentServiceImpl implements CommentService {
     /**
      * Добавление нового комментария
      * к определенному объявлению
-     * @param idAd id объявления
+     *
+     * @param idAd          id объявления
      * @param createComment DTO с текстом комментария
      * @return DTO comment
      */
@@ -84,7 +87,8 @@ public class CommentServiceImpl implements CommentService {
     /**
      * Удаление комментарий
      * к определенному объявлению
-     * @param idAd id объявления
+     *
+     * @param idAd      id объявления
      * @param commentId id комментария
      */
     @Override
@@ -104,8 +108,9 @@ public class CommentServiceImpl implements CommentService {
     /**
      * Обновление комментария
      * к определенному объявлению
-     * @param idAd id объявления
-     * @param commentId id комментария
+     *
+     * @param idAd          id объявления
+     * @param commentId     id комментария
      * @param updateComment DTO с новым текстом комментария
      * @return DTO comment
      */

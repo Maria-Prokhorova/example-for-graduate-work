@@ -107,6 +107,7 @@ public class CommentServiceImplTest {
      */
     @Test
     void shouldReturnResultOfGetCommentsWhenCommentsExist() {
+        when(adRepository.findById(1)).thenReturn(Optional.ofNullable(testAdEntity));
         when(commentRepository.getAmountCommentsByAdID(1))
                 .thenReturn(1);
         when(commentRepository.getListCommentEntityByAdID(1))
@@ -129,16 +130,6 @@ public class CommentServiceImplTest {
         when(adRepository.findById(2)).thenThrow(AdNotFoundException.class);
 
         assertThrows(AdNotFoundException.class, () -> adRepository.findById(2));
-    }
-
-    /**
-     * Тест на выброс исключения - CommentNotFoundException
-     */
-    @Test
-    void shouldReturnResultOfGetCommentsWhenCommentsDoNotExists() {
-        when(commentRepository.getAmountCommentsByAdID(2)).thenReturn(0);
-
-        assertThrows(CommentNotFoundException.class, () -> commentService.getComments(2));
     }
 
     /**
