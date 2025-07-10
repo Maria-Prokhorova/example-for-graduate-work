@@ -24,7 +24,7 @@ public class AdMapper {
         Ad ad = new Ad();
         ad.setPk(adEntity.getId());
         ad.setAuthor(adEntity.getAuthor().getId());
-        ad.setImage(adEntity.getImagePath());
+        ad.setImage(adEntity.getImagePath()!= null ? adEntity.getImagePath() : "/ads/" + adEntity.getId() + "/image");
         ad.setPrice(adEntity.getPrice());
         ad.setTitle(adEntity.getTitle());
         return ad;
@@ -47,7 +47,7 @@ public class AdMapper {
         extendedAd.setAuthorLastName(adEntity.getAuthor().getLastName());
         extendedAd.setDescription(adEntity.getDescription());
         extendedAd.setEmail(adEntity.getAuthor().getEmail());
-        extendedAd.setImage(adEntity.getImagePath());
+        extendedAd.setImage(adEntity.getImagePath() != null ? adEntity.getImagePath() : "/ads/" + adEntity.getId() + "/image");
         extendedAd.setPhone(adEntity.getAuthor().getPhoneNumber());
         extendedAd.setPrice(adEntity.getPrice());
         extendedAd.setTitle(adEntity.getTitle());

@@ -6,9 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.register.NewPassword;
@@ -94,16 +92,4 @@ public class UserController {
         userService.updateAvatarUser(image);
     }
 
-    /**
-     * Удаляет аватар текущего пользователя.
-     */
-    @Operation(summary = "Удаление аватара")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
-    })
-    @DeleteMapping("/me/image")
-    public void deleteAvatarUser() {
-        userService.deleteAvatarUser();
-    }
 }

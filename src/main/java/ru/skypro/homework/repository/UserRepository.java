@@ -9,9 +9,6 @@ import java.util.Optional;
 /**
  * Репозиторий для работы с пользователями системы.
  * Предоставляет методы для поиска, сохранения и управления пользователями.
- *
- * @author Homework Project
- * @version 1.0
  */
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {

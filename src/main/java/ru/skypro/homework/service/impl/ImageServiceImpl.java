@@ -108,7 +108,7 @@ public class ImageServiceImpl implements ImageService {
      *
      * @param adId - ID объявления
      * @return массив байтов изображения объявления
-     * @throws AdNotFoundException если объявление не найдено
+     * @throws AdNotFoundException    если объявление не найдено
      * @throws ImageNotFoundException если изображение не найдено или не удалось прочитать
      */
     @Override
@@ -123,7 +123,7 @@ public class ImageServiceImpl implements ImageService {
      * Получает аватар текущего пользователя.
      *
      * @return массив байтов аватара пользователя
-     * @throws UserNotFoundException если пользователь не найден
+     * @throws UserNotFoundException  если пользователь не найден
      * @throws ImageNotFoundException если изображение не найдено или не удалось прочитать
      */
     @Override
@@ -162,7 +162,7 @@ public class ImageServiceImpl implements ImageService {
      * Обновляет изображение, удаляя старое и сохраняя новое.
      *
      * @param oldFilePath - путь к старому файлу изображения
-     * @param newFile - новый файл изображения
+     * @param newFile     - новый файл изображения
      * @return путь к новому изображению
      * @throws ImageNotFoundException если не удалось сохранить или удалить изображение
      */

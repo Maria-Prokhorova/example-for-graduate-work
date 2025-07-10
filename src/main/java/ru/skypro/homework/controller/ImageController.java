@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 @Tag(name = "Изображения", description = "Раздел содержит методы по работе с изображениями")
 @Slf4j
-@RestController
 @RequestMapping("/images")
+@RestController
 public class ImageController {
 
     private final ImageService imageService;
@@ -38,7 +38,7 @@ public class ImageController {
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping(value = "/{imagePath}")
-    public ResponseEntity<byte[]> getAvatarUser(@PathVariable String imagePath, HttpServletResponse response) {
+    public ResponseEntity<byte[]> getAvatar(@PathVariable String imagePath, HttpServletResponse response) {
         byte[] image = imageService.getImage(imagePath);
         if (image == null) {
             return ResponseEntity.notFound().build();
@@ -56,6 +56,4 @@ public class ImageController {
             return MediaType.IMAGE_JPEG;
         }
     }
-
-
 }

@@ -8,9 +8,18 @@ import ru.skypro.homework.entity.AdEntity;
 
 import java.util.List;
 
+/**
+ * Репозиторий для работы с объявлениями пользователя.
+ */
 @Repository
 public interface AdRepository extends JpaRepository<AdEntity, Integer> {
 
+    /**
+     * Поиск всех объявлений, которые принадлежат определенному пользователю
+     *
+     * @param idUser - id пользователя.
+     * @return - список всех объявлений пользователя.
+     */
     @Query(value = "SELECT * FROM ads WHERE users_id = :idUser",
             nativeQuery = true)
     List<AdEntity> findByIdUser(@Param("idUser") Integer idUser);
