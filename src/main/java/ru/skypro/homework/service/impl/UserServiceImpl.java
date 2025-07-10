@@ -122,11 +122,13 @@ public class UserServiceImpl implements UserService {
     public void updateAvatarUser(MultipartFile image) {
         UserEntity userEntity = securityService.getCurrentUser();
 
-        // Сохраняем изображение
-        String imagePath = imageService.saveImage(image);
+        // Обновляем изображение, удаляя старое и сохраняя новое
+        String oldImagePath = userEntity.getImagePath();
+        String newImagePath = imageService.updateImage(oldImagePath, image);
 
         // Обновляем путь к аватару
-        userEntity.setImagePath(imagePath);
+        userEntity.setImagePath(newImagePath);
+
         userRepository.save(userEntity);
     }
 

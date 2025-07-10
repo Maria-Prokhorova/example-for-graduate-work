@@ -84,7 +84,7 @@ public class AdServiceImpl implements AdService {
 
         Optional<AdEntity> ad = adRepository.findById(adId);
         if (ad.isPresent()) {
-            return adMapper.toExtendedAdDto(ad.orElse(null));
+            return adMapper.toExtendedAdDto(ad.get());
         } else {
             throw new AdNotFoundException(adId);
         }
@@ -179,12 +179,14 @@ public class AdServiceImpl implements AdService {
         // Проверяем права на редактирование объявления
         securityService.checkPermissionToEditAd(ad.get());
 
-        // Сохраняем изображение
-        String imagePath = imageService.saveImage(image);
+        // Обновляем изображение, удаляя старое и сохраняя новое
+        String oldImagePath = ad.get().getImagePath();
+        String newImagePath = imageService.updateImage(oldImagePath, image);
 
         // Обновляем путь к картинке
-        ad.get().setImagePath(imagePath);
-        adRepository.save(ad.orElse(null));
+        ad.get().setImagePath(newImagePath);
+
+        adRepository.save(ad.get());
         return ad.get().getImagePath();
     }
 }

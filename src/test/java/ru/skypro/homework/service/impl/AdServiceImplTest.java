@@ -190,7 +190,6 @@ public class AdServiceImplTest {
     @Test
     void shouldReturnResultOfUpdateInfoAboutAdWhenSuccess() {
         when(adRepository.findById(1)).thenReturn(Optional.ofNullable(testAdEntity));
-        when(adRepository.save(any(AdEntity.class))).thenReturn(testAdEntity);
         when(adMapper.toAdDto(testAdEntity)).thenReturn(testAdDTO);
 
         securityService.checkPermissionToEditAd(testAdEntity);
@@ -201,7 +200,6 @@ public class AdServiceImplTest {
 
         assertEquals(testAdDTO, adService.updateInfoAboutAd(1, testCreateOrUpdateAdDTO));
 
-        verify(adRepository).save(any(AdEntity.class));
         verify(adMapper).toAdDto(testAdEntity);
     }
 
@@ -267,17 +265,19 @@ public class AdServiceImplTest {
     @Test
     void shouldReturnResultOfUpdateAvatarAdWhenSuccess() {
         MultipartFile mockFile = mock(MultipartFile.class);
+        String oldImagePath = testAdEntity.getImagePath();
         String newImagePath = "/new-avatar.jpg";
 
         when(adRepository.findById(1)).thenReturn(Optional.ofNullable(testAdEntity));
         securityService.checkPermissionToEditAd(testAdEntity);
-        when(imageService.saveImage(mockFile)).thenReturn(newImagePath);
+        when(imageService.updateImage(oldImagePath, mockFile)).thenReturn(newImagePath);
         when(adRepository.save(any(AdEntity.class))).thenReturn(testAdEntity);
+
 
         adService.updateAvatarAd(1, mockFile);
         assertEquals(newImagePath, testAdEntity.getImagePath());
 
-        verify(imageService).saveImage(mockFile);
+        verify(imageService).updateImage(oldImagePath, mockFile);
         verify(adRepository).save(testAdEntity);
     }
 
